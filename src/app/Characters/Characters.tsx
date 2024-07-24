@@ -1,10 +1,9 @@
 "use client";
 import React from "react";
-import character_id from './character.json';
 import UnitEditDialog from "./UnitEditDialog";
-
+import character_id from './character.json';
 interface CharacterId {
-    [key: string]: string[] | undefined;
+    [key: string]: string[];
 }
 
 interface UserCharacterList {
@@ -24,24 +23,15 @@ interface Props {
     };
 }
 
-const characterId: CharacterId = character_id as CharacterId;
+const characterId: CharacterId = character_id as unknown as CharacterId;
 
 const searchDevNameById = (id: string): string | undefined => {
-    for (let key in characterId) {
-        if (key === id && characterId[key]) {
-            return characterId[key]?.[0];
-        }
-    }
-    return undefined;
+    return characterId[id]?.[0];
 };
 
-const checkOwnedCharacters = (userList: UserCharacterList | undefined): Record<string, string> => {
+const checkOwnedCharacters = (userList: UserCharacterList = {}): Record<string, string> => {
     const ownedChars: Record<string, string> = {};
-    if (!userList) {
-        console.warn("userList is undefined");
-        return ownedChars;
-    }
-    for (let key in userList) {
+    for (const key in userList) {
         const devName = searchDevNameById(key);
         if (devName) {
             ownedChars[devName] = key;
@@ -50,24 +40,20 @@ const checkOwnedCharacters = (userList: UserCharacterList | undefined): Record<s
     return ownedChars;
 };
 
-export default function Characters(props: Props) {
-    const fileContent = props.userlist;
-
-    if (!fileContent || !fileContent.data || !fileContent.data.user_character_list) {
+export default function Characters({ userlist }: Props) {
+    if (!userlist?.data?.user_character_list) {
         console.warn("fileContent, fileContent.data, or fileContent.data.user_character_list is undefined");
         return <div>No data available</div>;
     }
 
-    const ownedCharacters = checkOwnedCharacters(fileContent.data.user_character_list);
+    const userCharacterList = userlist.data.user_character_list;
+    const ownedCharacters = checkOwnedCharacters(userCharacterList);
 
     const makeCharacterList = (): Character[] => {
-        const chars: Character[] = [];
-        for (let key in characterId) {
-            if (characterId[key]) {
-                chars.push({ devnickname: characterId[key]?.[0] || '', id: key });
-            }
-        }
-        return chars;
+        return Object.keys(characterId).map(key => ({
+            devnickname: characterId[key]?.[0] || '',
+            id: key
+        }));
     };
 
     const characterList = makeCharacterList();
@@ -76,30 +62,33 @@ export default function Characters(props: Props) {
 
     return (
         <div
-        style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '100%',
-            minHeight: '100vh',
-            padding: '10px 0',
-         
-        }}
-        >
-        <div
             style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(15, 1fr)',
-                boxSizing: 'border-box',
+                display: 'flex',
+                alignItems: 'center',
                 justifyContent: 'center',
+                width: '100%',
+                minHeight: '100vh',
+                padding: '30px 0',
             }}
         >
-            {characterList.map((character) => (
-                <div key={character.id}>
-                    <UnitEditDialog devnickname={character.devnickname} characterId={character.id} ownedunits={ownedCharacters} />
-                </div>
-            ))}
-        </div>
+            <div
+                style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(15, 1fr)',
+                    boxSizing: 'border-box',
+                    justifyContent: 'center',
+                }}
+            >
+                {characterList.map(character => (
+                    <div key={character.id}>
+                        <UnitEditDialog 
+                            devnickname={character.devnickname} 
+                            characterId={character.id} 
+                            ownedunits={ownedCharacters} 
+                        />
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }
