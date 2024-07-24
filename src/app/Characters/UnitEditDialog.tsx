@@ -12,7 +12,7 @@ export default function UnitEditDialog(props: any) {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    console.log("Owned Units: ", props.ownedunits)
+    // console.log("Owned Units: ", props.ownedunits)
     const owned_chars = props.ownedunits;
     const isUnitOwned = () => {
         // console.log("checking if owned units is correct, ", props.ownedunits);

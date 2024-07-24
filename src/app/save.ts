@@ -309,3 +309,18 @@ export function isSave(save: any): save is Save {
 export function getUsername(save: Save): string {
     return save.data.user_info.name;
 }
+
+//make a save without data_headers
+export function makeSave(data: Data): Save {
+    return {
+        data_headers: {
+            force_update: false,
+            asset_update: false,
+            short_udid: 0,
+            viewer_id: 0,
+            servertime: 0,
+            result_code: 0
+        },
+        data: data
+    }
+}

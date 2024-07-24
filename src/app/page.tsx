@@ -5,6 +5,9 @@ import { Button, Input, CircularProgress, Box, AppBar, Tabs, Tab, Typography } f
 import { useTheme } from '@mui/material/styles';
 import Characters from './Characters/Characters';
 import Equipment from './Equiment/Equipment';
+import General from './General/General';
+import Inventory from './Inventory/Inventory';
+
 const Save = require('./save');
 import { UserEquipmentList } from "./save";
 
@@ -52,15 +55,19 @@ async function action(formData: FormData) {
     const reader = new FileReader();
     reader.onload = (e) => {
       const content = e.target?.result;
-      try {
+      // try {
         const parsedData = JSON.parse(content!.toString());
         if (Save.isSave(parsedData)) {
           resolve(parsedData);
         } else {
-          throw new Error("Uploaded file format is invalid!");
-        }
-      } catch (error) {
-        reject(error);
+          console.log(parsedData);
+          const newSave = Save.makeSave(parsedData);
+          resolve(newSave);
+          
+      //     throw new Error("Uploaded file format is invalid!");
+      //   }
+      // } catch (error) {
+      //   reject(error);
       }
     };
     reader.readAsText(file as Blob);
@@ -185,16 +192,22 @@ export default function Home() {
               <Tab label="General" {...a11yProps(0)} />
               <Tab label="Characters" {...a11yProps(1)} />
               <Tab label="Equipment" {...a11yProps(2)} />
+              <Tab label="Inventory" {...a11yProps(3)} />
             </Tabs>
           </AppBar>
           <TabPanel value={value} index={0} dir={theme.direction}>
-            General
+            <General fileContent={fileContent} setFileContent={setFileContent} />
           </TabPanel>
           <TabPanel value={value} index={1} dir={theme.direction}>
             <Characters userlist={fileContent} />
           </TabPanel>
           <TabPanel value={value} index={2} dir={theme.direction}>
             <Equipment fileContent={fileContent} setFileContent={function (value: any): void {
+              throw new Error("Function not implemented.");
+            } } />
+          </TabPanel>
+          <TabPanel value={value} index={3} dir={theme.direction}>
+            <Inventory fileContent={fileContent} setFileContent={function (value: any): void {
               throw new Error("Function not implemented.");
             } } />
           </TabPanel>

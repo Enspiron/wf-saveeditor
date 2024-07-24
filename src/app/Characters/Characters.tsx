@@ -58,7 +58,7 @@ export default function Characters({ userlist }: Props) {
 
     const characterList = makeCharacterList();
 
-    console.log("Owned Characters:", ownedCharacters);
+    // console.log("Owned Characters:", ownedCharacters);
 
     return (
         <div
