@@ -78,7 +78,7 @@ async function handleFileUpload(
   }
   setLoading(true);
   try {
-    const json = await action(formData);
+    const json = await action(formData as FormData);
     setFileContent(json);
     if (e.target.files && e.target.files.length > 0) {
       setFileName(e.target.files[0].name);
