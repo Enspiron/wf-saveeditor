@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-// import Save from '../save';
 import character_id from './character.json';
 import UnitEditDialog from "./UnitEditDialog";
 
@@ -25,12 +24,12 @@ interface Props {
     };
 }
 
-const characterId: CharacterId = character_id;
+const characterId: CharacterId = character_id as CharacterId;
 
 const searchDevNameById = (id: string): string | undefined => {
     for (let key in characterId) {
         if (key === id && characterId[key]) {
-            return characterId[key][0];
+            return characterId[key]?.[0];
         }
     }
     return undefined;
@@ -63,9 +62,9 @@ export default function Characters(props: Props) {
 
     const makeCharacterList = (): Character[] => {
         const chars: Character[] = [];
-        for (let key in character_id) {
-            if (character_id[key]) {
-                chars.push({ devnickname: character_id[key][0], id: key });
+        for (let key in characterId) {
+            if (characterId[key]) {
+                chars.push({ devnickname: characterId[key]?.[0] || '', id: key });
             }
         }
         return chars;
@@ -77,13 +76,11 @@ export default function Characters(props: Props) {
 
     return (
         <div
-        style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(60px, 1fr))',
-            
-        }}
+            style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(60px, 1fr))',
+            }}
         >
-
             {characterList.map((character) => (
                 <div key={character.id}>
                     <UnitEditDialog devnickname={character.devnickname} characterId={character.id} ownedunits={ownedCharacters} />
