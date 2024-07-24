@@ -1,95 +1,202 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+import React, { useEffect, useState } from "react";
+import { FileUploader } from "react-drag-drop-files";
+import { CloudUpload as CloudUploadIcon, Download as DownloadIcon } from "@mui/icons-material";
+import { Button, Input, CircularProgress, Box, AppBar, Tabs, Tab, Typography } from "@mui/material";
+import { useTheme } from '@mui/material/styles';
+import Characters from './Characters/Characters';
+const Save = require('./save');
+
+interface FormData {
+  get: (arg: string) => File | null;
+}
+
+interface TabPanelProps {
+  children?: React.ReactNode;
+  dir?: string;
+  index: number;
+  value: number;
+}
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`full-width-tabpanel-${index}`}
+      aria-labelledby={`full-width-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+function a11yProps(index: number) {
+  return {
+    id: `full-width-tab-${index}`,
+    'aria-controls': `full-width-tabpanel-${index}`,
+  };
+}
+
+async function action(formData: FormData) {
+  const file = formData.get("file");
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const content = e.target?.result;
+      try {
+        const parsedData = JSON.parse(content!.toString());
+        if (Save.isSave(parsedData)) {
+          resolve(parsedData);
+        } else {
+          throw new Error("Uploaded file format is invalid!");
+        }
+      } catch (error) {
+        reject(error);
+      }
+    };
+    reader.readAsText(file as Blob);
+  });
+}
+
+async function handleFileUpload(
+  e: React.ChangeEvent<HTMLInputElement>,
+  setFileContent: React.Dispatch<React.SetStateAction<any | null>>,
+  setFileName: React.Dispatch<React.SetStateAction<string | null>>,
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>
+) {
+  const formData = new FormData();
+  if (e.target.files && e.target.files.length > 0) {
+    formData.append("file", e.target.files[0]);
+  }
+  setLoading(true);
+  try {
+    const json = await action(formData);
+    setFileContent(json);
+    if (e.target.files && e.target.files.length > 0) {
+      setFileName(e.target.files[0].name);
+    }
+    console.log("Loading file");
+    console.log(json);
+  } catch (error) {
+    console.error("Error uploading file:", error);
+  } finally {
+    setLoading(false);
+  }
+}
 
 export default function Home() {
+  const [fileContent, setFileContent] = useState<any | null>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const theme = useTheme();
+  const [value, setValue] = useState(0);
+
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+  };
+
+  const handleChangeIndex = (index: number) => {
+    setValue(index);
+  };
+
+  useEffect(() => {
+    const uploadDummyFile = async () => {
+      const debug = false;
+      if (debug && fileContent === null) {
+        await handleFileUpload(
+          {
+            target: {
+              files: [new File([JSON.stringify({})], "Enspiron_Save.json")],
+            },
+          } as unknown as React.ChangeEvent<HTMLInputElement>,
+          setFileContent,
+          setFileName,
+          setLoading
+        );
+      }
+    };
+
+    uploadDummyFile();
+  }, [fileContent]);
+
+  const handleDownload = () => {
+    if (!fileContent) return;
+    const blob = new Blob([JSON.stringify(fileContent)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = fileName ?? "download.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <main>
+      <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <Box sx={{ m: 1, position: "relative", justifyContent: "center" }}>
+          <Button
+            component="label"
+            variant="contained"
+            startIcon={<CloudUploadIcon />}
+            disabled={loading}
           >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
+            Upload file
+            <Input
+              type="file"
+              style={{ display: "none" }}
+              disabled={loading}
+              onChange={(e) => handleFileUpload(e, setFileContent, setFileName, setLoading)}
             />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
+          </Button>
+        </Box>
+        {loading && <CircularProgress />}
+        <Button
+          variant="contained"
+          startIcon={<DownloadIcon />}
+          onClick={handleDownload}
+          disabled={!fileContent}
         >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+          Download file
+        </Button>
+      </Box>
+      {fileContent && Save.getUsername(fileContent)}
+      {fileContent && (
+        <Box sx={{ bgcolor: 'background.paper' }}>
+          <AppBar position="static">
+            <Tabs
+              value={value}
+              onChange={handleChange}
+              indicatorColor="secondary"
+              textColor="inherit"
+              variant="fullWidth"
+              aria-label="full width tabs example"
+            >
+              <Tab label="General" {...a11yProps(0)} />
+              <Tab label="Characters" {...a11yProps(1)} />
+              <Tab label="Equipment" {...a11yProps(2)} />
+            </Tabs>
+          </AppBar>
+          <TabPanel value={value} index={0} dir={theme.direction}>
+            General
+          </TabPanel>
+          <TabPanel value={value} index={1} dir={theme.direction}>
+            <Characters userlist={fileContent} />
+          </TabPanel>
+          <TabPanel value={value} index={2} dir={theme.direction}>
+            Item Three
+          </TabPanel>
+        </Box>
+      )}
     </main>
   );
 }
