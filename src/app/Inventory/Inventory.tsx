@@ -103,26 +103,33 @@ export default function Inventory(props:any) {
                         <Typography>{category.name}</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <div>
-                            {GetAllItemsWithCategoryID(category.id).map((item) => (
-                                <div key={item.id}>
-                                    <img 
-                       
-                       src={`https://wfjukebox.b-cdn.net/big${item[2]}.png`} 
-                       // alt={item[0]} 
-                       style={{ 
-                           height: '40px',
-                           // width: '40px',
-                           cursor: 'pointer', 
-                           // border: '1px solid black',
-                           // padding: '5px',
+                        <div
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                width: '100%',
+                                // minHeight: '100vh',
+                                padding: '10px 0',
+                             
+                            }}
+                        >
 
-                       }} 
-                    //    onClick={() => handleClickOpen(item)}
-                   />
+                        <div
+                            style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(15, 1fr)',
+                                boxSizing: 'border-box',
+                                justifyContent: 'center',
+                            }}
+                            >
+                            {GetAllItemsWithCategoryID(category.id).map((item) => (
+                                <div>
+                                    <ItemDialog devnickname={item[0] } src={"https://wfjukebox.b-cdn.net/big"+item[2]+".png"} />
                                 </div>
                             ))}
                         </div>
+                    </div>
                     </AccordionDetails>
                 </Accordion>
             ))}
