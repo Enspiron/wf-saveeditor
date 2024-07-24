@@ -76,9 +76,22 @@ export default function Characters(props: Props) {
 
     return (
         <div
+        style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+            minHeight: '100vh',
+            padding: '10px 0',
+         
+        }}
+        >
+        <div
             style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(60px, 1fr))',
+                gridTemplateColumns: 'repeat(15, 1fr)',
+                boxSizing: 'border-box',
+                justifyContent: 'center',
             }}
         >
             {characterList.map((character) => (
@@ -86,6 +99,7 @@ export default function Characters(props: Props) {
                     <UnitEditDialog devnickname={character.devnickname} characterId={character.id} ownedunits={ownedCharacters} />
                 </div>
             ))}
+        </div>
         </div>
     );
 }

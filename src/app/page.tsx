@@ -1,15 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { FileUploader } from "react-drag-drop-files";
 import { CloudUpload as CloudUploadIcon, Download as DownloadIcon } from "@mui/icons-material";
 import { Button, Input, CircularProgress, Box, AppBar, Tabs, Tab, Typography } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import Characters from './Characters/Characters';
+import Equipment from './Equiment/Equipment';
 const Save = require('./save');
-
-interface FormData {
-  get: (arg: string) => File | null;
-}
+import { UserEquipmentList } from "./save";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -47,6 +44,10 @@ function a11yProps(index: number) {
 
 async function action(formData: FormData) {
   const file = formData.get("file");
+  if (!file) {
+    throw new Error("No file provided");
+  }
+
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -193,7 +194,9 @@ export default function Home() {
             <Characters userlist={fileContent} />
           </TabPanel>
           <TabPanel value={value} index={2} dir={theme.direction}>
-            Item Three
+            <Equipment fileContent={fileContent} setFileContent={function (value: any): void {
+              throw new Error("Function not implemented.");
+            } } />
           </TabPanel>
         </Box>
       )}

@@ -28,12 +28,19 @@ export default function UnitEditDialog(props: any) {
 
     return (
         <div>
-            <img width='50'
+            <img 
             style={{
-                border: '2px solid grey',
-                // padding: '5px',
-                margin: '5px',
-                ...(isUnitOwned() ? { transform: 'none' } : { filter: 'brightness(50%)' })
+                display: 'flex',
+                width: '56px',
+                height: '56px',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '3px',
+                margin: '2px',
+                border: '3px solid #000',
+                boxShadow: '0 0 1px 1px 0 #000',
+                backgroundColor: isUnitOwned() ? '#FFF' : '#000',
+                filter: isUnitOwned() ? 'none' : 'brightness(50%)'
             }}
                 src={`https://eliya-bot.herokuapp.com/img/assets/chars/${props.devnickname}/square_0.png`} 
                 alt={props.devnickname}
