@@ -155,7 +155,7 @@ export default function Home() {
               type="file"
               style={{ display: "none" }}
               disabled={loading}
-              onChange={(e) => handleFileUpload(e, setFileContent, setFileName, setLoading)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFileUpload(e, setFileContent, setFileName, setLoading)}
             />
           </Button>
         </Box>
