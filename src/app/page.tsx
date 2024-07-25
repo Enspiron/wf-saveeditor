@@ -127,6 +127,8 @@ export default function Home() {
   const theme = useTheme();
   const [value, setValue] = useState(0);
 
+  const [editable, setEditable] = useState(false);
+
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -227,6 +229,7 @@ export default function Home() {
               <Tab label="Characters" {...a11yProps(1)} />
               <Tab label="Equipment" {...a11yProps(2)} />
               <Tab label="Inventory" {...a11yProps(3)} />
+              <Tab label="Text Edit" {...a11yProps(4)} />
             </Tabs>
           </AppBar>
           <TabPanel value={value} index={0} dir={theme.direction}>
@@ -244,6 +247,65 @@ export default function Home() {
             <Inventory fileContent={fileContent} setFileContent={function (value: any): void {
               throw new Error("Function not implemented.");
             } } />
+          </TabPanel>
+          <TabPanel value={value} index={4} dir={theme.direction}>
+            <Typography>
+              <Button
+                variant="contained"
+                onClick={() => setEditable(!editable)}
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  display: "flex",
+                  margin: "10px",
+
+                }}
+              >
+                {editable ? "Save" : "Edit"}
+              </Button>
+            </Typography>
+            {editable ? (
+              <textarea
+                value={JSON.stringify(fileContent, null, 2)}
+                onChange={(e) => setFileContent(JSON.parse(e.target.value))}
+                style={{
+                  whiteSpace: 'pre-wrap',
+                  wordWrap: 'break-word',
+                  overflowWrap: 'break-word',
+                  padding: '10px',
+                  backgroundColor: '#f5f5f5',
+                  borderRadius: '5px',
+                  border: '1px solid #ddd',
+                  margin: '10px',
+                  fontSize: '14px',
+                  lineHeight: '1.5',
+                  fontFamily: 'monospace',
+                  height: '600px',
+                  overflowY: 'auto',
+                  width: '100%',
+                }}
+              />
+            ) : (
+              <pre
+                style={{
+                  whiteSpace: 'pre-wrap',
+                  wordWrap: 'break-word',
+                  overflowWrap: 'break-word',
+                  padding: '10px',
+                  backgroundColor: '#f5f5f5',
+                  borderRadius: '5px',
+                  border: '1px solid #ddd',
+                  margin: '10px',
+                  fontSize: '14px',
+                  lineHeight: '1.5',
+                  fontFamily: 'monospace',
+                  maxHeight: '600px',
+                  overflowY: 'auto',
+                }}
+              >
+                {JSON.stringify(fileContent, null, 2)}
+              </pre>
+            )}
           </TabPanel>
         </Box>
       )}
