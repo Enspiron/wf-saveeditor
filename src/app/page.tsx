@@ -57,21 +57,18 @@ async function action(formData: FormData) {
     const reader = new FileReader();
     reader.onload = (e) => {
       const content = e.target?.result;
-      // try {
+      try {
         const parsedData = JSON.parse(content!.toString());
         if (Save.isSave(parsedData)) {
           resolve(parsedData);
           Save.addEquipment(20, parsedData);
-
         } else {
           console.log(parsedData);
           const newSave = Save.makeSave(parsedData);
           resolve(newSave);
-          
-      //     throw new Error("Uploaded file format is invalid!");
-      //   }
-      // } catch (error) {
-      //   reject(error);
+        }
+      } catch (error) {
+        reject(error);
       }
     };
     reader.readAsText(file as Blob);
@@ -84,7 +81,7 @@ async function handleFileUpload(
   setFileName: React.Dispatch<React.SetStateAction<string | null>>,
   setLoading: React.Dispatch<React.SetStateAction<boolean>>
 ) {
-  const allowedTypes = ["application/json"]; 
+  const allowedTypes = ["application/json"];
   const maxFileSize = 1024 * 1024; // 1MB (adjust as needed)
 
   const file = e.target.files && e.target.files[0];
@@ -107,7 +104,7 @@ async function handleFileUpload(
   // setError(null); // Clear previous errors
 
   try {
-    const json: typeof Save = await action(formData as FormData); 
+    const json: typeof Save = await action(formData as FormData);
     setFileContent(json);
     setFileName(file.name);
     console.log("Loading file");
@@ -128,6 +125,7 @@ export default function Home() {
   const [value, setValue] = useState(0);
 
   const [editable, setEditable] = useState(false);
+  const [textareaContent, setTextareaContent] = useState('');
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -138,23 +136,9 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const uploadDummyFile = async () => {
-      const debug = false;
-      if (debug && fileContent === null) {
-        await handleFileUpload(
-          {
-            target: {
-              files: [new File([JSON.stringify({})], "Enspiron_Save.json")],
-            },
-          } as unknown as React.ChangeEvent<HTMLInputElement>,
-          setFileContent,
-          setFileName,
-          setLoading
-        );
-      }
-    };
-
-    uploadDummyFile();
+    if (fileContent) {
+      setTextareaContent(JSON.stringify(fileContent, null, 2));
+    }
   }, [fileContent]);
 
   const handleDownload = () => {
@@ -189,7 +173,6 @@ export default function Home() {
             />
           </Button>
         </Box>
-        {/* {loading && <CircularProgress />} */}
         <Button
           variant="contained"
           startIcon={<DownloadIcon />}
@@ -205,7 +188,6 @@ export default function Home() {
           onClick={() => {
             console.log("Fresh Account");
             setFileContent(Fresh);
-            // Save.addEquipment(100001, Fresh);
           }}
           sx={{ mx: 1 }} // Add this line to set the spacing
         >
@@ -223,7 +205,6 @@ export default function Home() {
               textColor="inherit"
               variant="fullWidth"
               aria-label="full width tabs example"
-
             >
               <Tab label="General" {...a11yProps(0)} />
               <Tab label="Characters" {...a11yProps(1)} />
@@ -239,26 +220,34 @@ export default function Home() {
             <Characters userlist={fileContent} />
           </TabPanel>
           <TabPanel value={value} index={2} dir={theme.direction}>
-            <Equipment fileContent={fileContent} setFileContent={function (value: any): void {
-              throw new Error("Function not implemented.");
-            } } />
+            <Equipment fileContent={fileContent} setFileContent={setFileContent} />
           </TabPanel>
           <TabPanel value={value} index={3} dir={theme.direction}>
-            <Inventory fileContent={fileContent} setFileContent={function (value: any): void {
-              throw new Error("Function not implemented.");
-            } } />
+            <Inventory fileContent={fileContent} setFileContent={setFileContent} />
           </TabPanel>
           <TabPanel value={value} index={4} dir={theme.direction}>
             <Typography>
               <Button
                 variant="contained"
-                onClick={() => setEditable(!editable)}
+                onClick={() => {
+                  if (editable) {
+                    try {
+                      const json = JSON.parse(textareaContent);
+                      console.log(json);
+                      setFileContent(json);
+                    } catch (error) {
+                      console.error("Error parsing JSON:", error);
+                    }
+                  } else {
+                    setTextareaContent(JSON.stringify(fileContent, null, 2));
+                  }
+                  setEditable(!editable);
+                }}
                 style={{
                   justifyContent: "center",
                   alignItems: "center",
                   display: "flex",
                   margin: "10px",
-
                 }}
               >
                 {editable ? "Save" : "Edit"}
@@ -266,8 +255,8 @@ export default function Home() {
             </Typography>
             {editable ? (
               <textarea
-                value={JSON.stringify(fileContent, null, 2)}
-                onChange={(e) => setFileContent(JSON.parse(e.target.value))}
+                value={textareaContent}
+                onChange={(e) => setTextareaContent(e.target.value)}
                 style={{
                   whiteSpace: 'pre-wrap',
                   wordWrap: 'break-word',

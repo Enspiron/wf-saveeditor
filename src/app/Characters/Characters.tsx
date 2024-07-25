@@ -1,7 +1,8 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import UnitEditDialog from "./UnitEditDialog";
 import character_id from './character.json';
+
 interface CharacterId {
     [key: string]: string[];
 }
@@ -42,13 +43,18 @@ const checkOwnedCharacters = (userList: UserCharacterList = {}): Record<string, 
 };
 
 export default function Characters({ userlist }: Props) {
+    const [ownedCharacters, setOwnedCharacters] = useState<Record<string, string>>({});
+
+    useEffect(() => {
+        if (userlist?.data?.user_character_list) {
+            setOwnedCharacters(checkOwnedCharacters(userlist.data.user_character_list));
+        }
+    }, [userlist]);
+
     if (!userlist?.data?.user_character_list) {
         console.warn("fileContent, fileContent.data, or fileContent.data.user_character_list is undefined");
         return <div>No data available</div>;
     }
-
-    const userCharacterList = userlist.data.user_character_list;
-    const ownedCharacters = checkOwnedCharacters(userCharacterList);
 
     const makeCharacterList = (): Character[] => {
         return Object.keys(characterId).map(key => ({
@@ -59,8 +65,6 @@ export default function Characters({ userlist }: Props) {
     };
 
     const characterList = makeCharacterList();
-
-    // console.log("Owned Characters:", ownedCharacters);
 
     return (
         <div
@@ -88,7 +92,7 @@ export default function Characters({ userlist }: Props) {
                             characterId={character.id} 
                             ownedunits={ownedCharacters} 
                             code={character.code}
-
+                            userlist={userlist}
                         />
                     </div>
                 ))}

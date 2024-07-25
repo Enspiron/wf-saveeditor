@@ -285,7 +285,9 @@ export function makeCharacter(id: number): UserCharacterList {
 //function that adds to characterlist
 //only input needed is characterID
 export function addCharacter(characterID: number, save: Save): void {
-    save.data.user_character_list[characterID] = makeCharacter(characterID);
+    // save.data.user_character_list[characterID] = makeCharacter(characterID);
+    console.log("Adding character with ID: ", characterID);
+    save.data.user_character_list[characterID.toString()] = makeCharacter(characterID);
 }
 
 
