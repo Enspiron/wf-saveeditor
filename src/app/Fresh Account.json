@@ -98,7 +98,7 @@
           "mana_board_index": 1
         }
       },
-      "user_character_mana_node_list": [],
+      "user_character_mana_node_list": {},
       "user_party_group_list": {
         "1": {
           "list": {

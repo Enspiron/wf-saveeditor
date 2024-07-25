@@ -288,6 +288,7 @@ export function addCharacter(characterID: number, save: Save): void {
     // save.data.user_character_list[characterID] = makeCharacter(characterID);
     console.log("Adding character with ID: ", characterID);
     save.data.user_character_list[characterID.toString()] = makeCharacter(characterID);
+    save.data.user_character_mana_node_list[characterID.toString()] = [];
 }
 
 
