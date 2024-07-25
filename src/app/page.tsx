@@ -54,48 +54,33 @@ function a11yProps(index: number) {
   };
 }
 
-async function fetch_json(): Promise<void> {
-  const link = "http://localhost:8000/api/player/save?id=1";
-
-  try {
-    const response = await axios.get(link); // Response type is now 'any'
-
-    if (response.status >= 200 && response.status < 300) {
-      console.log("API Response:", response.data);
-
-      // Handle the specific success case (e.g., update UI, store data, etc.)
-      // Since the response type is 'any', you'll need to check its structure before using it.
-      if (typeof response.data === "object") {
-        // Example: Assuming the response is an object with a 'name' property
-        console.log("Player name:", response.data.name);
-      } else {
-        console.log("Response data:", response.data);
-      }
-    } else {
-      // Handle errors that indicate an issue on the server-side (4xx or 5xx)
-      console.error(
-        `Error from API: ${response.status} - ${response.statusText}`,
-        response.data
-      );
-    }
-  } catch (error:any) {
-    // Handle errors that occur during the request itself (network issues, etc.)
-    if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
-      console.error(`Axios Error: ${error.response.status} - ${error.response.statusText}`
-      );
-    } else if (error.request) {
-      // The request was made but no response was received
-      // `error.request` is an instance of XMLHttpRequest in the browser and"No response received:", error.request);
-    } else {
-      console.error("Error:", error.message);
-    }
+async function action(formData: FormData) {
+  const file = formData.get("file");
+  if (!file) {
+    throw new Error("No file provided");
   }
+
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const content = e.target?.result;
+      try {
+        const parsedData = JSON.parse(content!.toString());
+        if (Save.isSave(parsedData)) {
+          resolve(parsedData);
+          Save.addEquipment(20, parsedData);
+        } else {
+          console.log(parsedData);
+          const newSave = Save.makeSave(parsedData);
+          resolve(newSave);
+        }
+      } catch (error) {
+        reject(error);
+      }
+    };
+    reader.readAsText(file as Blob);
+  });
 }
-
-fetch_json();
-
 
 async function handleFileUpload(
   e: React.ChangeEvent<HTMLInputElement>,
@@ -139,6 +124,48 @@ async function handleFileUpload(
   }
 }
 
+async function fetch_json(): Promise<void> {
+  const link = "http://localhost:8000/api/player/save?id=1";
+
+  try {
+    const response = await axios.get(link); // Response type is now 'any'
+
+    if (response.status >= 200 && response.status < 300) {
+      console.log("API Response:", response.data);
+
+      // Handle the specific success case (e.g., update UI, store data, etc.)
+      // Since the response type is 'any', you'll need to check its structure before using it.
+      if (typeof response.data === "object") {
+        // Example: Assuming the response is an object with a 'name' property
+        console.log("Player name:", response.data.name);
+      } else {
+        console.log("Response data:", response.data);
+      }
+    } else {
+      // Handle errors that indicate an issue on the server-side (4xx or 5xx)
+      console.error(
+        `Error from API: ${response.status} - ${response.statusText}`,
+        response.data
+      );
+    }
+  } catch (error:any) {
+    // Handle errors that occur during the request itself (network issues, etc.)
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      console.error(`Axios Error: ${error.response.status} - ${error.response.statusText}`
+      );
+    } else if (error.request) {
+      // The request was made but no response was received
+      // `error.request` is an instance of XMLHttpRequest in the browser and"No response received:", error.request);
+    } else {
+      console.error("Error:", error.message);
+    }
+  }
+}
+
+fetch_json();
+
 export default function Home() {
   const [fileContent, setFileContent] = useState<any | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
@@ -176,48 +203,18 @@ export default function Home() {
     URL.revokeObjectURL(url);
   };
 
-
-  async function fetch_json(): Promise<void> {
+  async function fetch_json() {
     const link = "http://localhost:8000/api/player/save?id=1";
-  
-    try {
-      const response: AxiosResponse<any> = await axios.get(link); // Use 'any' for response type
-  
-      if (response.status >= 200 && response.status < 300) {
-        console.log("API Response:", response.data);
-  
-        // Handle the specific success case (e.g., update UI, store data, etc.)
-        // Since the response type is 'any', you'll need to check its structure before using it.
-        if (typeof response.data === "object") {
-          // Example: Assuming the response is an object with a 'name' property
-          console.log("Player name:", response.data.name);
-        } else {
-          console.log("Response data:", response.data);
-        }
-      } else {
-        // Handle errors that indicate an issue on the server-side (4xx or 5xx)
-        console.error(
-          `Error from API: ${response.status} - ${response.statusText}`,
-          response.data
-        );
-      }
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError<any>;
-        console.error(
-          `Axios Error: ${axiosError.response?.status || axiosError.code} - ${
-            axiosError.response?.statusText || axiosError.message
-          }`
-        );
-      } else {
-        console.error("Unexpected error:", error);
-      }
+    const response = await fetch(link).then((response) => response.json()).then((data) => {
+      console.log(data);
+    //  setFileContent(data);
     }
-  }
-  
-  // Call the function
+    );
+
+}
+
+
   fetch_json();
-  
   
   return (
     <main>
