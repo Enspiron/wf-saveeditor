@@ -8,6 +8,11 @@ import Equipment from './Equiment/Equipment';
 import General from './General/General';
 import Inventory from './Inventory/Inventory';
 import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
+import jsonnet from 'jsonnet';
+
+const axios = require('axios');
+
+const json_link = "https://raw.githubusercontent.com/blead/eliyabot-assets/master/src/characters.jsonnet"
 
 const Save = require('./save');
 import { UserEquipmentList } from "./save";
@@ -19,6 +24,8 @@ interface TabPanelProps {
   index: number;
   value: number;
 }
+
+
 
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
@@ -47,33 +54,48 @@ function a11yProps(index: number) {
   };
 }
 
-async function action(formData: FormData) {
-  const file = formData.get("file");
-  if (!file) {
-    throw new Error("No file provided");
-  }
+async function fetch_json(): Promise<void> {
+  const link = "http://localhost:8000/api/player/save?id=1";
 
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const content = e.target?.result;
-      try {
-        const parsedData = JSON.parse(content!.toString());
-        if (Save.isSave(parsedData)) {
-          resolve(parsedData);
-          Save.addEquipment(20, parsedData);
-        } else {
-          console.log(parsedData);
-          const newSave = Save.makeSave(parsedData);
-          resolve(newSave);
-        }
-      } catch (error) {
-        reject(error);
+  try {
+    const response = await axios.get(link); // Response type is now 'any'
+
+    if (response.status >= 200 && response.status < 300) {
+      console.log("API Response:", response.data);
+
+      // Handle the specific success case (e.g., update UI, store data, etc.)
+      // Since the response type is 'any', you'll need to check its structure before using it.
+      if (typeof response.data === "object") {
+        // Example: Assuming the response is an object with a 'name' property
+        console.log("Player name:", response.data.name);
+      } else {
+        console.log("Response data:", response.data);
       }
-    };
-    reader.readAsText(file as Blob);
-  });
+    } else {
+      // Handle errors that indicate an issue on the server-side (4xx or 5xx)
+      console.error(
+        `Error from API: ${response.status} - ${response.statusText}`,
+        response.data
+      );
+    }
+  } catch (error:any) {
+    // Handle errors that occur during the request itself (network issues, etc.)
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      console.error(`Axios Error: ${error.response.status} - ${error.response.statusText}`
+      );
+    } else if (error.request) {
+      // The request was made but no response was received
+      // `error.request` is an instance of XMLHttpRequest in the browser and"No response received:", error.request);
+    } else {
+      console.error("Error:", error.message);
+    }
+  }
 }
+
+fetch_json();
+
 
 async function handleFileUpload(
   e: React.ChangeEvent<HTMLInputElement>,
@@ -154,6 +176,49 @@ export default function Home() {
     URL.revokeObjectURL(url);
   };
 
+
+  async function fetch_json(): Promise<void> {
+    const link = "http://localhost:8000/api/player/save?id=1";
+  
+    try {
+      const response: AxiosResponse<any> = await axios.get(link); // Use 'any' for response type
+  
+      if (response.status >= 200 && response.status < 300) {
+        console.log("API Response:", response.data);
+  
+        // Handle the specific success case (e.g., update UI, store data, etc.)
+        // Since the response type is 'any', you'll need to check its structure before using it.
+        if (typeof response.data === "object") {
+          // Example: Assuming the response is an object with a 'name' property
+          console.log("Player name:", response.data.name);
+        } else {
+          console.log("Response data:", response.data);
+        }
+      } else {
+        // Handle errors that indicate an issue on the server-side (4xx or 5xx)
+        console.error(
+          `Error from API: ${response.status} - ${response.statusText}`,
+          response.data
+        );
+      }
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError<any>;
+        console.error(
+          `Axios Error: ${axiosError.response?.status || axiosError.code} - ${
+            axiosError.response?.statusText || axiosError.message
+          }`
+        );
+      } else {
+        console.error("Unexpected error:", error);
+      }
+    }
+  }
+  
+  // Call the function
+  fetch_json();
+  
+  
   return (
     <main>
       <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>

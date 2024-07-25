@@ -2,6 +2,11 @@
 import React from "react";
 import UnitEditDialog from "./UnitEditDialog";
 import character_id from './character.json';
+import jsonnet from 'jsonnet';
+
+const json_link = "https://github.com/blead/eliyabot-assets/blob/master/src/characters.jsonnet"
+
+
 
 interface CharacterId {
     [key: string]: string[];
@@ -61,6 +66,17 @@ export default function Characters({ userlist }: Props) {
     };
 
     const characterList = makeCharacterList();
+
+    //use json
+    const fetch_json = async () => {
+        const response = await fetch(json_link);
+        const data = await response.json();
+        console.log(data);
+    }
+
+    fetch_json()
+
+    
 
     return (
         <div

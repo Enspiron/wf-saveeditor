@@ -296,6 +296,7 @@ export function addCharacter(characterID: number, save: Save): void {
 export function removeCharacter(characterID: number, save: Save): Save {
     const updatedSave = save;
     delete updatedSave.data.user_character_list[characterID];
+    delete updatedSave.data.user_character_mana_node_list[characterID];
     return updatedSave;
 }
 
