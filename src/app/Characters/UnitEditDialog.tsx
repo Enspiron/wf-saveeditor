@@ -57,7 +57,10 @@ export default function UnitEditDialog(props: any) {
                     {props.devnickname}
                     </Grid>
                     <Grid item>
-                    {isUnitOwned() ? "Owned" : "Not Owned"}
+                    {props.code}
+                    </Grid>
+                    <Grid item>
+                    {isUnitOwned() ? "Owned" : "Not Owned"} 
                     </Grid>
                     </Grid>
 

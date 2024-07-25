@@ -17,7 +17,7 @@ export interface Data {
     user_character_list:                     { [key: string]: UserCharacterList };
     user_character_mana_node_list:           { [key: string]: number[] };
     user_party_group_list:                   { [key: string]: UserPartyGroupList };
-    item_list:                               { key : number };
+    item_list: { [key: string]: number }; // Corrected this line
     user_equipment_list:                     { [key: string]: UserEquipmentList };
     user_character_from_town_history:        UserCharacterFromTownHistory[];
     quest_progress:                          { [key: string]: QuestProgress[] };
@@ -330,3 +330,13 @@ export function makeSave(data: Data): Save {
         data: data
     }
 }
+
+//get item
+
+
+//get item quantity
+export function getItemQuantity(itemID: number, save: Save): number {
+    const item = save.data.item_list[itemID.toString()];
+    return item !== undefined ? item : 0;
+}
+

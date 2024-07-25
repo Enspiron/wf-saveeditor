@@ -13,6 +13,7 @@ interface UserCharacterList {
 interface Character {
     devnickname: string;
     id: string;
+    code: string;
 }
 
 interface Props {
@@ -52,7 +53,8 @@ export default function Characters({ userlist }: Props) {
     const makeCharacterList = (): Character[] => {
         return Object.keys(characterId).map(key => ({
             devnickname: characterId[key]?.[0] || '',
-            id: key
+            id: key,
+            code: characterId[key]?.[17] || '',
         }));
     };
 
@@ -85,6 +87,8 @@ export default function Characters({ userlist }: Props) {
                             devnickname={character.devnickname} 
                             characterId={character.id} 
                             ownedunits={ownedCharacters} 
+                            code={character.code}
+
                         />
                     </div>
                 ))}

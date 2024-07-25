@@ -213,7 +213,7 @@ export default function Home() {
       {fileContent && Save.getUsername(fileContent)}
       {fileContent && (
         <Box sx={{ bgcolor: 'background.paper' }}>
-          <AppBar position="static">
+          <AppBar position="sticky">
             <Tabs
               value={value}
               onChange={handleChange}
@@ -221,6 +221,7 @@ export default function Home() {
               textColor="inherit"
               variant="fullWidth"
               aria-label="full width tabs example"
+
             >
               <Tab label="General" {...a11yProps(0)} />
               <Tab label="Characters" {...a11yProps(1)} />

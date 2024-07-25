@@ -61,7 +61,7 @@ export default function Inventory(props:any) {
         {name: "Star Speck", id: 20},
     ];
 
-    const [expanded, setExpanded] = React.useState<string | false>('panel1');
+    const [expanded, setExpanded] = React.useState<string | false>('');
 
     const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {

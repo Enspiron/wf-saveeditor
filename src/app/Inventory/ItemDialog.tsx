@@ -1,6 +1,13 @@
 import React from 'react';
+import { Box, Button, Divider, Typography, ToggleButton, ToggleButtonGroup, Dialog as MuiDialog } from '@mui/material';
+import Grid from '@mui/material/Grid';
 
-export default function Dialog(props: any) {
+export default function ItemDialog(props: any) {
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+
+
   const containerStyle = {
     width: '40px', // Or your desired width
     height: '40px', // Or your desired height
@@ -27,7 +34,20 @@ export default function Dialog(props: any) {
         style={imageStyle} 
         src={props.src} 
         alt={props.devnickname} 
+        onClick={handleOpen}
       />
+    <MuiDialog open={open} onClose={handleClose}>
+        <Box style={{ padding: '20px' }}>
+            <Grid container direction="column" justifyContent="center" alignItems="center">
+            <Grid item>
+                {props.devnickname}
+            </Grid>
+            </Grid>
+        </Box>
+    </MuiDialog>
     </div>
+
+
+
   );
 }
