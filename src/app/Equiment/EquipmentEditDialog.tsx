@@ -49,6 +49,7 @@ export default function EquipmentEditDialog(props:any) {
                     <Grid container direction="column" justifyContent="center" alignItems="center">
                     <Grid item>
                     {props.devnickname}
+                     id: {props.equip_id}
                     </Grid>
                     <Grid item>
                     {isEquipOwned() ? "Owned" : "Not Owned"}

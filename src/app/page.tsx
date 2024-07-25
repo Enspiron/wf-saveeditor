@@ -7,9 +7,11 @@ import Characters from './Characters/Characters';
 import Equipment from './Equiment/Equipment';
 import General from './General/General';
 import Inventory from './Inventory/Inventory';
+import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
 
 const Save = require('./save');
 import { UserEquipmentList } from "./save";
+const Fresh = require('./Fresh Account.json');
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -59,6 +61,8 @@ async function action(formData: FormData) {
         const parsedData = JSON.parse(content!.toString());
         if (Save.isSave(parsedData)) {
           resolve(parsedData);
+          Save.addEquipment(20, parsedData);
+
         } else {
           console.log(parsedData);
           const newSave = Save.makeSave(parsedData);
@@ -76,25 +80,41 @@ async function action(formData: FormData) {
 
 async function handleFileUpload(
   e: React.ChangeEvent<HTMLInputElement>,
-  setFileContent: React.Dispatch<React.SetStateAction<any | null>>,
+  setFileContent: React.Dispatch<React.SetStateAction<typeof Save | null>>,
   setFileName: React.Dispatch<React.SetStateAction<string | null>>,
   setLoading: React.Dispatch<React.SetStateAction<boolean>>
 ) {
-  const formData = new FormData();
-  if (e.target.files && e.target.files.length > 0) {
-    formData.append("file", e.target.files[0]);
+  const allowedTypes = ["application/json"]; 
+  const maxFileSize = 1024 * 1024; // 1MB (adjust as needed)
+
+  const file = e.target.files && e.target.files[0];
+  if (!file) return; // No file selected
+
+  if (!allowedTypes.includes(file.type)) {
+    // setError("Invalid file type. Please select a JSON file.");
+    return;
   }
+
+  if (file.size > maxFileSize) {
+    // setError("File size exceeds the limit.");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("file", file);
+
   setLoading(true);
+  // setError(null); // Clear previous errors
+
   try {
-    const json = await action(formData as FormData);
+    const json: typeof Save = await action(formData as FormData); 
     setFileContent(json);
-    if (e.target.files && e.target.files.length > 0) {
-      setFileName(e.target.files[0].name);
-    }
+    setFileName(file.name);
     console.log("Loading file");
     console.log(json);
   } catch (error) {
     console.error("Error uploading file:", error);
+    // setError("An error occurred while uploading the file.");
   } finally {
     setLoading(false);
   }
@@ -167,14 +187,27 @@ export default function Home() {
             />
           </Button>
         </Box>
-        {loading && <CircularProgress />}
+        {/* {loading && <CircularProgress />} */}
         <Button
           variant="contained"
           startIcon={<DownloadIcon />}
           onClick={handleDownload}
           disabled={!fileContent}
+          sx={{ mx: 1 }} // Add this line to set the spacing
         >
           Download file
+        </Button>
+        <Button
+          variant="contained"
+          startIcon={<InsertDriveFileOutlinedIcon />}
+          onClick={() => {
+            console.log("Fresh Account");
+            setFileContent(Fresh);
+            // Save.addEquipment(100001, Fresh);
+          }}
+          sx={{ mx: 1 }} // Add this line to set the spacing
+        >
+          Clean Save Import
         </Button>
       </Box>
       {fileContent && Save.getUsername(fileContent)}

@@ -17,7 +17,7 @@ export interface Data {
     user_character_list:                     { [key: string]: UserCharacterList };
     user_character_mana_node_list:           { [key: string]: number[] };
     user_party_group_list:                   { [key: string]: UserPartyGroupList };
-    item_list:                               { [key: string]: number };
+    item_list:                               { key : number };
     user_equipment_list:                     { [key: string]: UserEquipmentList };
     user_character_from_town_history:        UserCharacterFromTownHistory[];
     quest_progress:                          { [key: string]: QuestProgress[] };
@@ -39,6 +39,11 @@ export interface Data {
     multi_special_exchange_campaign_list:    MultiSpecialExchangeCampaignList[];
     associate_token:                         string;
     config:                                  { [key: string]: number };
+}
+
+export interface Item {
+    id: number;
+    quantity: number;
 }
 
 export interface AllActiveMissionList {
@@ -242,8 +247,9 @@ export function makeEquipment(id: number): UserEquipmentList {
 //function that adds to equipmentlist
 //only input needed is equipmentID
 export function addEquipment(equipmentID: number, save: Save): void {
-    save.data.user_equipment_list[equipmentID] = makeEquipment(equipmentID);
-}
+    // Use the equipment ID as the key, not the array index
+    save.data.user_equipment_list[equipmentID.toString()] = makeEquipment(equipmentID); 
+  }
 
 //function that removes equipment
 export function removeEquipment(equipmentID: number, save: Save): void {

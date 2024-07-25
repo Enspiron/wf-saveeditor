@@ -19,13 +19,13 @@ export default function General(props:any) {
 
       <div>
         
-        <TextField
+        {/* <TextField
           id="standard-helperText"
           label="Helper text"
           defaultValue="Default Value"
           helperText="Some important text"
           variant="standard"
-        />
+        /> */}
       </div>
     </Box>
         </div>
