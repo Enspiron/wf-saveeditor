@@ -54,7 +54,7 @@ export default function Characters({ userlist }: Props) {
         return Object.keys(characterId).map(key => ({
             devnickname: characterId[key]?.[0] || '',
             id: key,
-            code: characterId[key]?.[17] || '',
+            code: key
         }));
     };
 
