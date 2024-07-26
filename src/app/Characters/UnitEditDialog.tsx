@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Dialog, Grid, Switch, FormGroup, FormControlLabel, FormControl, FormLabel } from '@mui/material';
 import Slider from '@mui/material/Slider';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Paper from '@mui/material/Paper';
 const Save = require('../save');
 
@@ -22,32 +18,59 @@ interface UnitEditDialogProps {
   };
 }
 
-function createData(
-    name: string,
-    level: number,
-) {
-    return { name, level };
-
-}
-
-const rows = [
-    createData('Ability 1', 1),
-    createData('Ability 2', 1),
-    createData('Ability 3', 1),
-    createData('Ability 4', 1),
-    createData('Ability 5', 1),
-    createData('Ability 6', 1),
-]
 
 export default function UnitEditDialog({ devnickname, code, ownedunits, userlist }: UnitEditDialogProps) {
-  const [open, setOpen] = useState(false);
-  const [unitOwned, setUnitOwned] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [unitOwned, setUnitOwned] = useState(false);
+    
+    const [abiOneLevel, setAbiOneLevel] = useState(0); //number
+    const [abilities, setAbilities] = useState<number[]>([]); //number[]
+    
+    const handleAbiOneChange = (
+        event: React.MouseEvent<HTMLElement>,
+        newAbility: number[],
+      ) => {
+        if (newAbility.length > 0) {
+          const clickedNumber = newAbility[newAbility.length - 1];
+          const clickedLevel = Number(event.currentTarget.getAttribute('value'));
+          let updatedAbilities;
+          
+          // Determine whether to add or remove abilities
+          if (newAbility[newAbility.length - 1] > Math.max(...abilities, -1)) {
+            // Add abilities up to the clicked number
+            updatedAbilities = Array.from({ length: clickedNumber + 1 }, (_, i) => i);
+            setAbilities(updatedAbilities);
+          } else {
+            // Remove abilities after the clicked number
+            // updatedAbilities = abilities.filter(num => num <= clickedNumber);
+            if(clickedLevel ===5) {
+                setAbilities([]);
+                return;
+            }
 
-  useEffect(() => {
-    setUnitOwned(devnickname in ownedunits);
-  }, [devnickname, ownedunits]);
 
-  const handleOpen = () => setOpen(true);
+            console.log("clicked number: ", clickedLevel);
+            const abilityLevel = [];
+            for (let i = 0; i <= clickedLevel; i++) {
+              abilityLevel.push(i);
+            }
+
+            console.log("Ability Level: ", abilityLevel);
+            setAbilities(abilityLevel);
+          }
+          
+          
+        } else {
+          setAbilities([]);
+        }
+      };
+    
+
+    useEffect(() => {
+      setUnitOwned(devnickname in ownedunits);
+    }, [devnickname, ownedunits]);
+  
+    const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const handleUnitChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,95 +97,79 @@ export default function UnitEditDialog({ devnickname, code, ownedunits, userlist
     "level" : 1
   }, userlist);
 
-  return (
+return (
     <div>
-      <img
-        style={{
-            display: 'flex',
-            width: '56px',
-            height: '56px',
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: '3px',
-            margin: '2px',
-            border: '3px solid #000',
-            boxShadow: '0 0 1px 1px 0 #000',
-            backgroundColor: unitOwned ? '#FFF' : '#000',
-            filter: unitOwned ? 'none' : 'brightness(50%)'
-        }}
-        src={`https://eliya-bot.herokuapp.com/img/assets/chars/${devnickname}/square_0.png`}
-        alt={devnickname}
-        onClick={handleOpen}
-      />
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        // fullWidth
-        maxWidth={false}
-      >
-        <Box style={{
-          padding: '20px',
-          width: '50vw', // Set the width to 90% of the viewport width
-          maxWidth: '820px', // Optional: set a max width
-          margin: '0 auto' // Center the dialog horizontally
-        }}>
-        <Grid container direction="row" justifyContent="center" alignItems="center">
-        <Grid item style={{margin: '10px'}}>
-            <img src={`https://eliya-bot.herokuapp.com/img/assets/chars/${devnickname}/square_0.png`} alt={devnickname} style={{width:'100px'}} />
-        </Grid>
-        <Grid item>
-            <Grid container direction="column" justifyContent="center" alignItems="center">
-            <Grid item>
-                <FormControl component="fieldset">
-                <FormLabel component="legend">Add Character</FormLabel>
-                <FormGroup>
-                    <FormControlLabel
-                    control={<Switch checked={unitOwned} onChange={handleUnitChange} name="owned" />}
-                    label="Owned"
-                    />
-                </FormGroup>
-                </FormControl>
-            </Grid>
-            <Grid item>char devname: {devnickname}</Grid>
-            <Grid item>Char id: {code}</Grid>
-            </Grid>
-        </Grid>
-        </Grid>
+        <img
+            style={{
+                display: 'flex',
+                width: '56px',
+                height: '56px',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '3px',
+                margin: '2px',
+                border: '3px solid #000',
+                boxShadow: '0 0 1px 1px 0 #000',
+                backgroundColor: unitOwned ? '#FFF' : '#000',
+                filter: unitOwned ? 'none' : 'brightness(50%)'
+            }}
+            src={`https://eliya-bot.herokuapp.com/img/assets/chars/${devnickname}/square_0.png`}
+            alt={devnickname}
+            onClick={handleOpen}
+        />
+        <Dialog
+            open={open}
+            onClose={handleClose}
+            maxWidth={false}
+        >
+            <Box style={{
+                padding: '20px',
+                width: '50vw',
+                maxWidth: '820px',
+                margin: '0 auto'
+            }}>
+                <Grid container direction="row" justifyContent="center" alignItems="center">
+                    <Grid item style={{ margin: '10px' }}>
+                        <img src={`https://eliya-bot.herokuapp.com/img/assets/chars/${devnickname}/square_0.png`} alt={devnickname} style={{ width: '100px' }} />
+                    </Grid>
+                    <Grid item>
+                        <Grid container direction="column" justifyContent="center" alignItems="center">
+                            <Grid item>
+                                <FormControl component="fieldset">
+                                    <FormLabel component="legend">Add Character</FormLabel>
+                                    <FormGroup>
+                                        <FormControlLabel
+                                            control={<Switch checked={unitOwned} onChange={handleUnitChange} name="owned" />}
+                                            label="Owned"
+                                        />
+                                    </FormGroup>
+                                </FormControl>
+                            </Grid>
+                            <Grid item>char devname: {devnickname}</Grid>
+                            <Grid item>Char id: {code}</Grid>
+                        </Grid>
+                    </Grid>
+                </Grid>
 
-
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Ability</TableCell>
-                  <TableCell>Level</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows.map((row) => (
-                  <TableRow key={row.name}>
-                    <TableCell component="th" scope="row" style={{width: '15%'}}>
-                      {row.name}
-                    </TableCell>
-                    <TableCell>
-                      <Slider
-                        defaultValue={row.level}
-                        aria-labelledby="discrete-slider"
-                        valueLabelDisplay="auto"
-                        step={1}
-                        marks
-                        min={0}
-                        max={5}
-                        disabled
-                      />
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Box>
-      </Dialog>
+                <ToggleButtonGroup
+                    value={abilities}
+                    onChange={handleAbiOneChange}
+                >
+                    {Array.from(Array(6), (_, index) => (
+                        <ToggleButton
+                            key={index}
+                            value={index}
+                            aria-label={`ability-${index}`}
+                            style={{ width: '50px', height: '50px' }}
+                            // disabled={index < abiOneLevel}
+                            // onChange={handleAbiOneChange}
+                        >
+                            {index}
+                        </ToggleButton>
+                    ))}
+                </ToggleButtonGroup>
+            </Box>
+        </Dialog>
     </div>
-  );
+);
 }

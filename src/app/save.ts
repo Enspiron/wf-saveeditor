@@ -411,3 +411,42 @@ export function getItemQuantity(itemID: number, save: Save): number {
     return item !== undefined ? item : 0;
 }
 
+//get vmoney
+export function getVmoney(save: Save): number {
+    return save.data.user_info.free_vmoney;
+}
+
+//set vmoney
+export function setVmoney(amount: number, save: Save): void {
+    save.data.user_info.free_vmoney = parseInt(amount.toString(), 10);
+}
+
+//get name
+export function getName(save: Save): string {
+    return save.data.user_info.name;
+}
+
+//set name
+export function setName(name: string, save: Save): void {
+    save.data.user_info.name = name;
+}
+
+//get exp
+export function getExp(save: Save): number {
+    return save.data.user_info.exp_pool;
+}
+
+//set exp as number
+export function setExp(amount: number, save: Save): void {
+    save.data.user_info.exp_pool = amount;
+}
+
+//set mana 
+export function setMana(amount: number, save: Save): void {
+    save.data.user_info.free_mana = amount;
+}
+
+//get mana
+export function getMana(save: Save): number {
+    return save.data.user_info.free_mana;
+}
