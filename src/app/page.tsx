@@ -256,7 +256,7 @@ export default function Home() {
           Clean Save Import
         </Button>
       </Box>
-      {fileContent && Save.getUsername(fileContent)}
+      {/* {fileContent && Save.getUsername(fileContent)} */}
       {fileContent && (
         <Box sx={{ bgcolor: 'background.paper' }}>
           <AppBar position="sticky">

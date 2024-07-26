@@ -37,6 +37,7 @@ export default function General(props: any) {
         MakeInput("Beads", Beads, Save.getVmoney(save), (value: any) => Save.setVmoney(value, save), "number"),
         MakeInput("EXP", EXP, Save.getExp(save), (value: any) => Save.setExp(value, save), "number"),
         MakeInput("Mana", Mana, Save.getMana(save), (value: any) => Save.setMana(value, save), "number"),
+        MakeInput("Rank", Profile, Save.getRankPoint(save), (value: any) => Save.setRankPoint(value, save), "number")
         
     ];
 
