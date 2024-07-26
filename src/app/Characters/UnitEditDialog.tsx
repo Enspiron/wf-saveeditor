@@ -108,7 +108,7 @@ export default function UnitEditDialog({ devnickname, code, ownedunits, userlist
         }}>
         <Grid container direction="row" justifyContent="center" alignItems="center">
         <Grid item style={{margin: '10px'}}>
-            <img src={`https://eliya-bot.herokuapp.com/img/assets/chars/${devnickname}/square_0.png`} alt={devnickname} />
+            <img src={`https://eliya-bot.herokuapp.com/img/assets/chars/${devnickname}/square_0.png`} alt={devnickname} style={{width:'100px'}} />
         </Grid>
         <Grid item>
             <Grid container direction="column" justifyContent="center" alignItems="center">
