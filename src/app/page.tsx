@@ -164,7 +164,7 @@ async function fetch_json(): Promise<void> {
   }
 }
 
-fetch_json();
+// fetch_json();
 
 export default function Home() {
   const [fileContent, setFileContent] = useState<any | null>(null);
@@ -214,7 +214,7 @@ export default function Home() {
 }
 
 
-  fetch_json();
+  // fetch_json();
   
   return (
     <main>

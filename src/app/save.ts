@@ -1,3 +1,5 @@
+const mana_node = require('./mana_node.json');
+
 export interface Save {
     data_headers: DataHeaders;
     data:         Data;
@@ -334,6 +336,71 @@ export function makeSave(data: Data): Save {
         data: data
     }
 }
+
+interface ManaNodeMap {
+    [key: string]: number[]
+}
+
+interface Ability {
+    id: string;
+    level: number;
+}
+
+export function editManaboard(characterID: number, ability: Ability, save: Save): void {
+    // Map of node groups
+    const NODE_GROUPS: ManaNodeMap = {
+        abi1: [0, 1, 2, 3, 4, 5],
+        abi2: [6, 7, 8, 9, 10, 11],
+        abi3: [12, 13, 14, 15, 16, 17],
+        actionSkillEvolution: [18],
+        actionSkillLevel: [19, 20, 21, 22],
+        abi4: [23, 24, 25, 26, 27, 28],
+        abi5: [29, 30, 31, 32, 33, 34],
+        abi6: [35, 36, 37, 38, 39, 40],
+    };
+
+    const characterNodes = mana_node["user_character_mana_node_list"][characterID.toString()];
+
+    if (!characterNodes) {
+        console.error(`No nodes found for character ID: ${characterID}`);
+        return;
+    }
+
+    const nodeGroup = NODE_GROUPS[ability.id];
+
+    if (!nodeGroup) {
+        console.error(`Invalid ability ID: ${ability.id}`);
+        return;
+    }
+
+    if (ability.level < 0 || ability.level >= nodeGroup.length) {
+        console.error(`Invalid ability level: ${ability.level} for ability ID: ${ability.id}`);
+        return;
+    }
+
+    const nodeIndex = nodeGroup[ability.level];
+
+    if (ability.id.startsWith("abi")) {
+        console.log(`Editing ability node ${ability.id} at level ${ability.level} for character ${characterID}`);
+        console.log("The node group you are using is ", nodeGroup, "The index for the level you are upgrading is ", nodeGroup[ability.level]);
+        try{
+
+            const node_id = characterNodes[nodeIndex];
+            console.log("The node id is ", node_id);
+        }catch (error){
+            console.error("The node id is not found");
+        }
+    } else if (ability.id.startsWith("actionSkill")) {
+        console.log(`Editing action skill node ${ability.id} at level ${ability.level} for character ${characterID}`);
+        characterNodes[nodeIndex] = true; // Assuming you set the node as true to indicate activation or some similar logic
+    } else {
+        console.error(`Unsupported ability ID format: ${ability.id}`);
+    }
+
+    // You might want to save the updated characterNodes back to the save object if needed
+    // save.mana_node["user_character_mana_node_list"][characterID.toString()] = characterNodes;
+}
+
 
 //get item
 
