@@ -265,8 +265,8 @@ export function makeCharacter(id: number): UserCharacterList {
         evolution_level: 1,
         over_limit_step: 0,
         protection: false,
-        join_time: Date.now(),
-        update_time: Date.now(),
+        join_time: parseInt(Date.now().toString().slice(0, -3), 10),
+        update_time: parseInt(Date.now().toString().slice(0, -3), 10),
         exp: 0,
         stack: 1,
         bond_token_list: [
