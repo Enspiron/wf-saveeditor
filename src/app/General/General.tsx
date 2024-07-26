@@ -8,7 +8,7 @@ import FormGroup from '@mui/material/FormGroup';
 
 // Import the image
 import Beads from './stone_large.png';
-import Profile from './profile.png'
+import Profile from './Profile.png'
 import EXP from './pool_exp.png'
 import Mana from './mana.png'
 
