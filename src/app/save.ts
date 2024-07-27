@@ -493,3 +493,13 @@ export function setRankPoint(level: number, save: Save): void {
 export function getRankPoint(save: Save): number {
     return expToLevel(save.data.user_info.rank_point);
 }
+
+//get comment
+export function getComment(save: Save): string {
+    return save.data.user_info.comment;
+}
+
+//set comment
+export function setComment(comment: string, save: Save): void {
+    save.data.user_info.comment = comment;
+}

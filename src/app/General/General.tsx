@@ -34,10 +34,11 @@ export default function General(props: any) {
 
     const inputs = [
         MakeInput("Name", Profile, Save.getName(save), (value: any) => Save.setName(value, save), "string"),
+        MakeInput("Rank", Profile, Save.getRankPoint(save), (value: any) => Save.setRankPoint(value, save), "number"),
+        MakeInput("Comment", Profile, Save.getComment(save), (value: any) => Save.setComment(value, save), "string"),
         MakeInput("Beads", Beads, Save.getVmoney(save), (value: any) => Save.setVmoney(value, save), "number"),
         MakeInput("EXP", EXP, Save.getExp(save), (value: any) => Save.setExp(value, save), "number"),
         MakeInput("Mana", Mana, Save.getMana(save), (value: any) => Save.setMana(value, save), "number"),
-        MakeInput("Rank", Profile, Save.getRankPoint(save), (value: any) => Save.setRankPoint(value, save), "number")
         
     ];
 

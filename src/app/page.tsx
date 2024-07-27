@@ -9,6 +9,7 @@ import General from './General/General';
 import Inventory from './Inventory/Inventory';
 import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
 import jsonnet from 'jsonnet';
+import { SnackbarProvider, VariantType, useSnackbar } from 'notistack';
 
 const axios = require('axios');
 
@@ -176,6 +177,10 @@ export default function Home() {
   const [editable, setEditable] = useState(false);
   const [textareaContent, setTextareaContent] = useState('');
 
+  const [latestCommit, setLatestCommit] = useState<any | null>(null);
+  const { enqueueSnackbar } = useSnackbar();
+
+
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -202,16 +207,6 @@ export default function Home() {
     a.click();
     URL.revokeObjectURL(url);
   };
-
-  async function fetch_json() {
-    const link = "http://localhost:8000/api/player/save?id=1";
-    const response = await fetch(link).then((response) => response.json()).then((data) => {
-      console.log(data);
-    //  setFileContent(data);
-    }
-    );
-
-}
 
 
   // fetch_json();

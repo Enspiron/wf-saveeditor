@@ -36,6 +36,11 @@ const searchDevNameById = (id: string): string | undefined => {
     return characterId[id]?.[0];
 };
 
+const hasMB2 = (id: string): boolean => {
+    //check if index 31 is true
+    return characterId[id]?.[characterId[id].length-1] === "6,6,6,6,6,6";
+}
+
 const checkOwnedCharacters = (userList: UserCharacterList = {}): Record<string, string> => {
     const ownedChars: Record<string, string> = {};
     for (const key in userList) {
@@ -105,6 +110,7 @@ export default function Characters({ userlist }: Props) {
                             ownedunits={ownedCharacters} 
                             code={character.code}
                             userlist={userlist}
+                            mb2={hasMB2(character.id)}
                         />
                     </div>
                 ))}
