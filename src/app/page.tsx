@@ -117,6 +117,11 @@ async function handleFileUpload(
     setFileName(file.name);
     console.log("Loading file");
     console.log(json);
+    //delete equipment id 20
+    Save.removeEquipment(20, json);
+
+    //log equipment list
+    console.log(json.data.user_equipment_list);
   } catch (error) {
     console.error("Error uploading file:", error);
     // setError("An error occurred while uploading the file.");
