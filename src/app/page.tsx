@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { CloudUpload as CloudUploadIcon, Download as DownloadIcon } from "@mui/icons-material";
+import { Check, CloudUpload as CloudUploadIcon, Download as DownloadIcon } from "@mui/icons-material";
 import { Button, Input, CircularProgress, Box, AppBar, Tabs, Tab, Typography } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import Characters from './Characters/Characters';
@@ -397,8 +397,8 @@ export default async function Home() {
         >
           Clean Save Import
         </Button>
-        <SaveMenu saves={users || []} setFileContent={setFileContent} />
-        <pre>This part is in beta!</pre>
+        {await CheckCores() ? <div><SaveMenu saves={users || []} setFileContent={setFileContent} /><pre>This part is in beta!</pre></div> : null}
+        
       </Box>
       {/* {fileContent && Save.getUsername(fileContent)} */}
       {fileContent && (
