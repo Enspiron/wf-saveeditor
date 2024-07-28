@@ -285,7 +285,7 @@ function SaveMenu(props:any) {
             <Paper>
               <ClickAwayListener onClickAway={handleClose}>
                 <MenuList id="split-button-menu" autoFocusItem>
-                  {props.saves.map((option:User, index:any) => (
+                  {props.saves?.map((option:User, index:any) => (
                     <MenuItem
                       key={option.id}
                       // disabled={index === 2}
@@ -359,7 +359,7 @@ export default async function Home() {
   }
 
   const saves = await GetSavesFromAPI();
-  const users = saves.map((save:any, index:any) => {return {id: save.id, name: save.name}});
+  const users = saves?.map((save:any, index:any) => {return {id: save.id, name: save.name}});
   // console.log(users);
  
   
