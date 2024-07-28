@@ -8,8 +8,6 @@ import Equipment from './Equipment/Equipment';
 import General from './General/General';
 import Inventory from './Inventory/Inventory';
 import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
-import jsonnet from 'jsonnet';
-import { SnackbarProvider, VariantType, useSnackbar } from 'notistack';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
@@ -20,8 +18,6 @@ import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
 // 
 const axios = require('axios');
-
-const json_link = "https://raw.githubusercontent.com/blead/eliyabot-assets/master/src/characters.jsonnet"
 
 const Save = require('./save');
 // import { Save, UserEquipmentList } from "./save";
@@ -64,9 +60,6 @@ async function GetSavesFromAPI() {
   } catch (error) {
     console.error("Failed to fetch data from API:", error)
   }
-
-  // return saves;
-
 
 }
 
@@ -318,7 +311,6 @@ export default async function Home() {
   const [textareaContent, setTextareaContent] = useState('');
 
   const [latestCommit, setLatestCommit] = useState<any | null>(null);
-  const { enqueueSnackbar } = useSnackbar();
 
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
