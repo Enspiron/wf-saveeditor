@@ -278,16 +278,16 @@ function SaveMenu(props:any) {
             <Paper>
               <ClickAwayListener onClickAway={handleClose}>
               <MenuList id="split-button-menu" autoFocusItem>
-              {(props.saves || []).map((option:User, index:any) => (
-                <MenuItem
-                  key={option.id}
-                  selected={index === selectedIndex}
-                  onClick={(event) => handleMenuItemClick(event, index)}
-                >
-                  {option.id}: {option.name}
-                </MenuItem>
-              ))}
-            </MenuList>
+                  {(props.saves || []).map((option:any, index:any) => (
+                    <MenuItem
+                      key={option.id}
+                      selected={index === selectedIndex}
+                      onClick={(event) => handleMenuItemClick(event, index)}
+                    >
+                      {option.id}: {option.name ?? 'Unknown'}
+                    </MenuItem>
+                  ))}
+                </MenuList>
               </ClickAwayListener>
             </Paper>
           </Grow>
