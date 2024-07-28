@@ -30,59 +30,48 @@ interface TabPanelProps {
   value: number;
 }
 
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+
 async function CheckCores() {
-  //test if cores works using perpage fetch from api
-  const url = "http://localhost:8000/api/player?page=0&perPage=25";
+  const url = `${apiBaseUrl}/api/player?page=0&perPage=25`;
   try {
-    const response = await axios.get(url); // Response type is now 'any'
+    const response = await axios.get(url);
     return true;
-  }
-  catch (error) {
+  } catch (error) {
     return false;
   }
-
 }
 
 async function GetSavesFromAPI() {
-  const url = "http://localhost:8000/api/player?page=0&perPage=25";
-  // const [saves, setSaves] = useState<any | null>(null);
-  
+  const url = `${apiBaseUrl}/api/player?page=0&perPage=25`;
   try {
-    const response = await axios.get(url); // Response type is now 'any'
-    
+    const response = await axios.get(url);
     if (response.status === 200) {
-      // console.log(response.data);
       return response.data;
     } else {
       console.error("Failed to fetch data from API");
     }
-    
   } catch (error) {
-    console.error("Failed to fetch data from API:", error)
+    console.error("Failed to fetch data from API:", error);
   }
-
 }
 
-async function GetSaveFromList(index:number) {
+async function GetSaveFromList(index: number) {
   const saves = await GetSavesFromAPI();
   const saveID = saves[index].id;
-  const url = `http://localhost:8000/api/player/save?id=${saveID}`;
+  const url = `${apiBaseUrl}/api/player/save?id=${saveID}`;
   try {
-    const response = await axios.get(url); // Response type is now 'any'
-    
+    const response = await axios.get(url);
     if (response.status === 200) {
-      // console.log(response.data);
       return response.data;
     } else {
       console.error("Failed to fetch data from API");
     }
-    
   } catch (error) {
-    console.error("Failed to fetch data from API:", error)
+    console.error("Failed to fetch data from API:", error);
   }
-
-
 }
+
 
 
 
