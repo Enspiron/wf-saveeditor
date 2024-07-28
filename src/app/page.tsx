@@ -394,7 +394,8 @@ export default async function Home() {
         >
           Clean Save Import
         </Button>
-        <SaveMenu saves={users} setFileContent={setFileContent} /> <pre>This part is in beta!</pre>
+        <SaveMenu saves={users || []} setFileContent={setFileContent} />
+        <pre>This part is in beta!</pre>
       </Box>
       {/* {fileContent && Save.getUsername(fileContent)} */}
       {fileContent && (
