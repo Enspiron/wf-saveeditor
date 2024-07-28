@@ -4,19 +4,27 @@ import { CloudUpload as CloudUploadIcon, Download as DownloadIcon } from "@mui/i
 import { Button, Input, CircularProgress, Box, AppBar, Tabs, Tab, Typography } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import Characters from './Characters/Characters';
-import Equipment from './Equiment/Equipment';
+import Equipment from './Equipment/Equipment';
 import General from './General/General';
 import Inventory from './Inventory/Inventory';
 import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
 import jsonnet from 'jsonnet';
 import { SnackbarProvider, VariantType, useSnackbar } from 'notistack';
-
+import ButtonGroup from '@mui/material/ButtonGroup';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
+import Grow from '@mui/material/Grow';
+import Paper from '@mui/material/Paper';
+import Popper from '@mui/material/Popper';
+import MenuItem from '@mui/material/MenuItem';
+import MenuList from '@mui/material/MenuList';
+// 
 const axios = require('axios');
 
 const json_link = "https://raw.githubusercontent.com/blead/eliyabot-assets/master/src/characters.jsonnet"
 
 const Save = require('./save');
-import { UserEquipmentList } from "./save";
+// import { Save, UserEquipmentList } from "./save";
 const Fresh = require('./Fresh Account.json');
 
 interface TabPanelProps {
@@ -24,6 +32,63 @@ interface TabPanelProps {
   dir?: string;
   index: number;
   value: number;
+}
+
+async function CheckCores() {
+  //test if cores works using perpage fetch from api
+  const url = "http://localhost:8000/api/player?page=0&perPage=25";
+  try {
+    const response = await axios.get(url); // Response type is now 'any'
+    return true;
+  }
+  catch (error) {
+    return false;
+  }
+
+}
+
+async function GetSavesFromAPI() {
+  const url = "http://localhost:8000/api/player?page=0&perPage=25";
+  // const [saves, setSaves] = useState<any | null>(null);
+  
+  try {
+    const response = await axios.get(url); // Response type is now 'any'
+    
+    if (response.status === 200) {
+      // console.log(response.data);
+      return response.data;
+    } else {
+      console.error("Failed to fetch data from API");
+    }
+    
+  } catch (error) {
+    console.error("Failed to fetch data from API:", error)
+  }
+
+  // return saves;
+
+
+}
+
+async function GetSaveFromList(index:number) {
+  const saves = await GetSavesFromAPI();
+  const saveID = saves[index].id;
+  const url = `http://localhost:8000/api/player/save?id=${saveID}`;
+  try {
+    const response = await axios.get(url); // Response type is now 'any'
+    
+    if (response.status === 200) {
+      // console.log(response.data);
+      return response.data;
+    } else {
+      console.error("Failed to fetch data from API");
+    }
+    
+  } catch (error) {
+    console.error("Failed to fetch data from API:", error)
+  }
+
+
 }
 
 
@@ -130,49 +195,119 @@ async function handleFileUpload(
   }
 }
 
-async function fetch_json(): Promise<void> {
-  const link = "http://localhost:8000/api/player/save?id=1";
-
-  try {
-    const response = await axios.get(link); // Response type is now 'any'
-
-    if (response.status >= 200 && response.status < 300) {
-      console.log("API Response:", response.data);
-
-      // Handle the specific success case (e.g., update UI, store data, etc.)
-      // Since the response type is 'any', you'll need to check its structure before using it.
-      if (typeof response.data === "object") {
-        // Example: Assuming the response is an object with a 'name' property
-        console.log("Player name:", response.data.name);
-      } else {
-        console.log("Response data:", response.data);
-      }
-    } else {
-      // Handle errors that indicate an issue on the server-side (4xx or 5xx)
-      console.error(
-        `Error from API: ${response.status} - ${response.statusText}`,
-        response.data
-      );
-    }
-  } catch (error:any) {
-    // Handle errors that occur during the request itself (network issues, etc.)
-    if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
-      console.error(`Axios Error: ${error.response.status} - ${error.response.statusText}`
-      );
-    } else if (error.request) {
-      // The request was made but no response was received
-      // `error.request` is an instance of XMLHttpRequest in the browser and"No response received:", error.request);
-    } else {
-      console.error("Error:", error.message);
-    }
-  }
-}
 
 // fetch_json();
 
-export default function Home() {
+function SaveMenu(props:any) {
+  const [open, setOpen] = React.useState(false);
+  const anchorRef = React.useRef<HTMLDivElement>(null);
+  const [selectedIndex, setSelectedIndex] = React.useState(1);
+
+  const handleClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    console.info(`You clicked ${props.saves[selectedIndex].name}`);
+    const save = await GetSaveFromList(selectedIndex);
+    console.log((save));
+    const new_save = Save.makeSave(save);
+    props.setFileContent(new_save);
+
+    
+    
+    
+  };
+
+  const handleMenuItemClick = async (
+    event: React.MouseEvent<HTMLLIElement, MouseEvent>,
+    index: number,
+  ) => {
+    setSelectedIndex(index);
+    setOpen(false);
+    //get the save of that user
+
+  };
+
+  const handleToggle = () => {
+    setOpen((prevOpen) => !prevOpen);
+  };
+
+  const handleClose = (event: Event) => {
+    if (
+      anchorRef.current &&
+      anchorRef.current.contains(event.target as HTMLElement)
+    ) {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  interface User {
+    id: number;
+    name: string;
+  }
+
+  return (
+    <React.Fragment>
+      <ButtonGroup
+        variant="contained"
+        ref={anchorRef}
+        aria-label="Button group with a nested menu"
+      >
+        <Button onClick={handleClick}>{props.saves[selectedIndex].name}</Button>
+        <Button
+          size="small"
+          aria-controls={open ? 'split-button-menu' : undefined}
+          aria-expanded={open ? 'true' : undefined}
+          aria-label="select merge strategy"
+          aria-haspopup="menu"
+          onClick={handleToggle}
+        >
+          <ArrowDropDownIcon />
+        </Button>
+      </ButtonGroup>
+      <Popper
+        sx={{
+          zIndex: 1,
+        }}
+        open={open}
+        anchorEl={anchorRef.current}
+        role={undefined}
+        transition
+        disablePortal
+      >
+        {({ TransitionProps, placement }) => (
+          <Grow
+            {...TransitionProps}
+            style={{
+              transformOrigin:
+                placement === 'bottom' ? 'center top' : 'center bottom',
+            }}
+          >
+            <Paper>
+              <ClickAwayListener onClickAway={handleClose}>
+                <MenuList id="split-button-menu" autoFocusItem>
+                  {props.saves.map((option:User, index:any) => (
+                    <MenuItem
+                      key={option.id}
+                      // disabled={index === 2}
+                      selected={index === selectedIndex}
+                      onClick={(event) => handleMenuItemClick(event, index)}
+                    >
+                      {option.id}: {option.name}
+                    </MenuItem>
+                  ))}
+                </MenuList>
+              </ClickAwayListener>
+            </Paper>
+          </Grow>
+        )}
+      </Popper>
+    </React.Fragment>
+  );
+
+}
+
+
+export default async function Home() {
   const [fileContent, setFileContent] = useState<any | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -214,7 +349,19 @@ export default function Home() {
   };
 
 
-  // fetch_json();
+  // const saves = await GetSaveFromList(2);
+  // console.log(saves);
+  // await CheckCores() ? console.log("Cores work") : console.log("Cores don't work");
+
+  interface User {
+    id: number;
+    name: string;
+  }
+
+  const saves = await GetSavesFromAPI();
+  const users = saves.map((save:any, index:any) => {return {id: save.id, name: save.name}});
+  // console.log(users);
+ 
   
   return (
     <main>
@@ -255,6 +402,7 @@ export default function Home() {
         >
           Clean Save Import
         </Button>
+        <SaveMenu saves={users} setFileContent={setFileContent} /> <pre>This part is in beta!</pre>
       </Box>
       {/* {fileContent && Save.getUsername(fileContent)} */}
       {fileContent && (

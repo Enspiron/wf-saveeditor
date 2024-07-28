@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Box, Dialog, Grid, Switch, FormGroup, FormControlLabel, FormControl, FormLabel } from '@mui/material';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import Tab from '@mui/material/Tab';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
 
 const Save = require('../save');
 
@@ -18,9 +22,20 @@ interface UnitEditDialogProps {
   mb2: boolean;
 }
 
+interface TabPanelProps {
+    children?: React.ReactNode;
+    index: number;
+    value: number;
+  }
+
 export default function UnitEditDialog({ devnickname, code, ownedunits, userlist, mb2 }: UnitEditDialogProps) {
     const [open, setOpen] = useState(false);
     const [unitOwned, setUnitOwned] = useState(false);
+    const [tabValue, setTabValue] = useState('1');
+
+    const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
+        setTabValue(newValue);
+    }
     
     const initialAbilities = mb2 ? [[], [], [], [], [], []] : [[], [], []];
     const [abilities, setAbilities] = useState<number[][]>(initialAbilities);
@@ -138,21 +153,27 @@ export default function UnitEditDialog({ devnickname, code, ownedunits, userlist
                             </Grid>
                         </Grid>
                     </Grid>
-
+                    <TabContext value={tabValue}>
+                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                            <TabList onChange={handleTabChange} aria-label="lab API tabs example" centered>
+                                <Tab label="Abilities" value="1" />
+                                <Tab label="EX Boost" value="2" />
+                            </TabList>
+                        <TabPanel value="1">
                     {abiList.map((abi, index) => (
                         <div key={abi}>
                             abi: {abi}
                             <ToggleButtonGroup
                                 value={abilities[index]}
                                 onChange={(event, newAbility) => handleAbilityChange(index, event, newAbility)}
-                            >
+                                >
                                 {
                                     Array.from(Array(6), (_, idx) => (
                                         <ToggleButton
-                                            key={idx}
-                                            value={idx}
-                                            aria-label={`ability-${idx}`}
-                                            style={{ width: '50px', height: '50px' }}
+                                        key={idx}
+                                        value={idx}
+                                        aria-label={`ability-${idx}`}
+                                        style={{ width: '50px', height: '50px' }}
                                         >
                                             {idx}
                                         </ToggleButton>
@@ -161,6 +182,12 @@ export default function UnitEditDialog({ devnickname, code, ownedunits, userlist
                             </ToggleButtonGroup>
                         </div>
                     ))}
+                    </TabPanel>
+                    <TabPanel value="2">
+                        <div>EX Boost</div>
+                    </TabPanel>
+                    </Box>
+                    </TabContext>
                 </Box>
             </Dialog>
         </div>
