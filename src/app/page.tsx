@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { Check, CloudUpload as CloudUploadIcon, Download as DownloadIcon } from "@mui/icons-material";
 import { Button, Input, CircularProgress, Box, AppBar, Tabs, Tab, Typography } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
@@ -16,6 +16,7 @@ import Paper from '@mui/material/Paper';
 import Popper from '@mui/material/Popper';
 import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
+import { send } from "process";
 // 
 const axios = require('axios');
 
@@ -84,6 +85,20 @@ async function GetSaveFromList(index:number) {
 
 }
 
+async function SendSaveToAPI(save:any) { 
+  const url = "http://localhost:8000/api/player/save?id=1";
+  try {
+    const { data } = await axios.post(url, save);
+    console.log(data);
+  } catch (error) {
+    console.error("Failed to send save to API:", error);
+  }
+
+  
+
+
+}
+
 
 
 function TabPanel(props: TabPanelProps) {
@@ -127,7 +142,7 @@ async function action(formData: FormData) {
         const parsedData = JSON.parse(content!.toString());
         if (Save.isSave(parsedData)) {
           resolve(parsedData);
-          Save.addEquipment(20, parsedData);
+          // Save.addEquipment(20, parsedData);
         } else {
           console.log(parsedData);
           const newSave = Save.makeSave(parsedData);
@@ -191,52 +206,49 @@ async function handleFileUpload(
 
 // fetch_json();
 
-function SaveMenu(props:any) {
-  const [open, setOpen] = React.useState(false);
-  const anchorRef = React.useRef<HTMLDivElement>(null);
-  const [selectedIndex, setSelectedIndex] = React.useState(1);
+function SaveMenu(props: any) {
+  const [open, setOpen] = useState(false);
+  const anchorRef = useRef<HTMLDivElement>(null);
+  const [selectedIndex, setSelectedIndex] = useState(1);
 
-  const handleClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
-    console.info(`You clicked ${props.saves[selectedIndex].name}`);
+  const handleClick = useCallback(async () => {
+    const selectedSave = props.saves[selectedIndex];
+    console.info(`You clicked ${selectedSave.name}`);
     const save = await GetSaveFromList(selectedIndex);
-    console.log((save));
-    const new_save = Save.makeSave(save);
-    props.setFileContent(new_save);
+    console.log(save);
+    const newSave = Save.makeSave(save);
+    props.setFileContent(newSave);
+    const response = await SendSaveToAPI(newSave);
+    console.log("Sent the file, response:", response);
+  }, [selectedIndex, props]);
 
-    
-    
-    
-  };
-
-  const handleMenuItemClick = async (
-    event: React.MouseEvent<HTMLLIElement, MouseEvent>,
-    index: number,
-  ) => {
+  const handleMenuItemClick = useCallback((event: React.MouseEvent<HTMLLIElement, MouseEvent>, index: number) => {
     setSelectedIndex(index);
     setOpen(false);
-    //get the save of that user
+  }, []);
 
-  };
-
-  const handleToggle = () => {
+  const handleToggle = useCallback(() => {
     setOpen((prevOpen) => !prevOpen);
-  };
+  }, []);
 
-  const handleClose = (event: Event) => {
-    if (
-      anchorRef.current &&
-      anchorRef.current.contains(event.target as HTMLElement)
-    ) {
+  const handleClose = useCallback((event: MouseEvent | TouchEvent) => {
+    if (anchorRef.current && anchorRef.current.contains(event.target as HTMLElement)) {
       return;
     }
-
     setOpen(false);
-  };
+  }, []);
 
-  interface User {
-    id: number;
-    name: string;
-  }
+  const renderedMenuItems = useMemo(() => (
+    (props.saves || []).map((option: any, index: any) => (
+      <MenuItem
+        key={option.id}
+        selected={index === selectedIndex}
+        onClick={(event) => handleMenuItemClick(event, index)}
+      >
+        {option.id}: {option.name ?? 'Unknown'}
+      </MenuItem>
+    ))
+  ), [props.saves, selectedIndex, handleMenuItemClick]);
 
   return (
     <React.Fragment>
@@ -258,9 +270,7 @@ function SaveMenu(props:any) {
         </Button>
       </ButtonGroup>
       <Popper
-        sx={{
-          zIndex: 1,
-        }}
+        sx={{ zIndex: 1 }}
         open={open}
         anchorEl={anchorRef.current}
         role={undefined}
@@ -271,26 +281,13 @@ function SaveMenu(props:any) {
           <Grow
             {...TransitionProps}
             style={{
-              transformOrigin:
-                placement === 'bottom' ? 'center top' : 'center bottom',
+              transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
             }}
           >
             <Paper>
               <ClickAwayListener onClickAway={handleClose}>
-              <MenuList id="split-button-menu" autoFocusItem>
-              {(props.saves || []).map((option:any, index:any) => {
-                    console.log('SaveMenu option:', option);
-
-                    return (
-                      <MenuItem
-                        key={option.id}
-                        selected={index === selectedIndex}
-                        onClick={(event) => handleMenuItemClick(event, index)}
-                      >
-                        {option.id}: {option.name ?? 'Unknown'}
-                      </MenuItem>
-                    );
-                  })}
+                <MenuList id="split-button-menu" autoFocusItem>
+                  {renderedMenuItems}
                 </MenuList>
               </ClickAwayListener>
             </Paper>
@@ -299,10 +296,7 @@ function SaveMenu(props:any) {
       </Popper>
     </React.Fragment>
   );
-
 }
-
-
 export default async function Home() {
   const [fileContent, setFileContent] = useState<any | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
@@ -397,7 +391,7 @@ export default async function Home() {
         >
           Clean Save Import
         </Button>
-        {await CheckCores() ? <div><SaveMenu saves={users || []} setFileContent={setFileContent} /><pre>This part is in beta!</pre></div> : null}
+        {await CheckCores() ? <div><SaveMenu saves={users || []} setFileContent={setFileContent} fileContent={fileContent} /><pre>This part is in beta!</pre></div> : null}
         
       </Box>
       {/* {fileContent && Save.getUsername(fileContent)} */}

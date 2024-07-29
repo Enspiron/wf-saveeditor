@@ -2,6 +2,7 @@
 import React from "react";
 import EquipmentEditDialog from "./EquipmentEditDialog";
 const equipment_id = require('./equipment.json');
+const enhanceable = require('./equipment_enhancement.json');
 
 interface Equipment {
   devnickname: string;
@@ -51,6 +52,10 @@ const Equipment: React.FC<Props> = (props:any) => {
     return ownedEquipment;
   };
 
+  const getEnhancementLevel = (id: string): number | undefined | boolean => { 
+    return enhanceable[id] ? props.fileContent?.data.user_equipment_list[id]?.enhancement_level : false;
+  }
+
   const makeEquipmentList = (): Record<string, string> => {
     const equipmentList: Record<string, string> = {};
 
@@ -68,6 +73,15 @@ const Equipment: React.FC<Props> = (props:any) => {
   });
 
   const ownedEquipment = checkOwnedEquipment();
+
+  //go through enhancement list and make a list of the keys
+  const enhanceableList: Record<string, string> = {};
+  const enhanceables: string[] = [];
+  Object.keys(enhanceable).forEach(key => {
+    enhanceables.push(key);
+  });
+
+  console.log(getEnhancementLevel("5010070"));
 
   return (
     <div
@@ -96,6 +110,8 @@ const Equipment: React.FC<Props> = (props:any) => {
           devnickname={equip.devnickname}
           ownedequips={ownedEquipment}
           equip_id={equip.id}
+          enhanceable={enhanceables.includes(equip.id)}
+          level={getEnhancementLevel(equip.id)}
           />
         ))}
     </div>
