@@ -143,6 +143,7 @@ async function action(formData: FormData) {
         if (Save.isSave(parsedData)) {
           resolve(parsedData);
           // Save.addEquipment(20, parsedData);
+          Save.removeEquipment(20, parsedData);
         } else {
           console.log(parsedData);
           const newSave = Save.makeSave(parsedData);
@@ -217,6 +218,7 @@ function SaveMenu(props: any) {
     const save = await GetSaveFromList(selectedIndex);
     console.log(save);
     const newSave = Save.makeSave(save);
+    Save.removeEquipment(20, newSave);
     props.setFileContent(newSave);
     const response = await SendSaveToAPI(newSave);
     console.log("Sent the file, response:", response);
