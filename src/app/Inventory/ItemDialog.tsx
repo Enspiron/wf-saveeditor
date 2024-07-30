@@ -42,7 +42,9 @@ export default function ItemDialog(props: any) {
             <Grid item>
                 {props.devnickname}
             </Grid>
+            id: {props.id}
             </Grid>
+            name: {props.name}
         </Box>
     </MuiDialog>
     </div>

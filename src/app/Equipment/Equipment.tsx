@@ -56,6 +56,10 @@ const Equipment: React.FC<Props> = (props:any) => {
     return enhanceable[id] ? props.fileContent?.data.user_equipment_list[id]?.enhancement_level : false;
   }
 
+  const getLevel = (id: string): number | undefined => {
+    return props.fileContent?.data.user_equipment_list[id]?.level;
+  }
+
   const makeEquipmentList = (): Record<string, string> => {
     const equipmentList: Record<string, string> = {};
 
@@ -112,6 +116,8 @@ const Equipment: React.FC<Props> = (props:any) => {
           equip_id={equip.id}
           enhanceable={enhanceables.includes(equip.id)}
           level={getEnhancementLevel(equip.id)}
+          fileContent={props.fileContent}
+          upgrade={getLevel(equip.id)}
           />
         ))}
     </div>

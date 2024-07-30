@@ -258,6 +258,17 @@ export function removeEquipment(equipmentID: number, save: Save): void {
     delete save.data.user_equipment_list[equipmentID];
 }
 
+//set equip enhancelevel
+export function setEquipEnhanceLevel(equipmentID: number, level: number, save: Save): void {
+    save.data.user_equipment_list[equipmentID].enhancement_level = level;
+}
+
+//set equip level
+export function setEquipLevel(equipmentID: number, level: number, save: Save): void {
+    save.data.user_equipment_list[equipmentID].level = level;
+}
+
+
 //function that makes a new character
 export function makeCharacter(id: number): UserCharacterList {
     return {
