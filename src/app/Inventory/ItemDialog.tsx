@@ -42,7 +42,7 @@ export default function ItemDialog(props: any) {
     setItemAmount(itemAmount);
     }
 
-    const itemRef = React.useRef(0);
+    const itemRef = React.useRef<HTMLInputElement>(null);
 
   return (
     <div style={containerStyle}>
@@ -94,14 +94,14 @@ export default function ItemDialog(props: any) {
             </Grid>
 
             <Button
-            variant="contained"
-            onClick={() => setAmount(parseInt(itemRef.current.value))}
-            style={{
+              variant="contained"
+              onClick={() => setAmount(parseInt(itemRef.current?.value || '0'))}
+              style={{
                 marginTop: '10px',
                 width: '100%',
-            }}
+              }}
             >
-                Set Amount
+              Set Amount
             </Button>
             <div
             style={{
