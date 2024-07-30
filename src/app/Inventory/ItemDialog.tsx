@@ -93,6 +93,11 @@ export default function ItemDialog(props: any) {
                     min:0,
                     max:props.cap
                 }}
+                style={{
+                    width: '100%',
+                    margin: '10px 0',
+                    textAlign: 'center',
+                }}
 
 
                 />
