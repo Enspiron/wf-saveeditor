@@ -422,6 +422,11 @@ export function getItemQuantity(itemID: number, save: Save): number {
     return item !== undefined ? item : 0;
 }
 
+//set item quantity
+export function setItemQuantity(itemID: number, quantity: number, save: Save): void {
+    save.data.item_list[itemID.toString()] = quantity;
+}
+
 //get vmoney
 export function getVmoney(save: Save): number {
     return save.data.user_info.free_vmoney;

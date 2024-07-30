@@ -25,8 +25,8 @@ const Accordion = styled((props: AccordionProps) => (
       display: 'none',
     },
   }));
-  
-  const AccordionSummary = styled((props: AccordionSummaryProps) => (
+
+const AccordionSummary = styled((props: AccordionSummaryProps) => (
     <MuiAccordionSummary
       expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />}
       {...props}
@@ -44,41 +44,19 @@ const Accordion = styled((props: AccordionProps) => (
       marginLeft: theme.spacing(1),
     },
   }));
-  
-  const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
+
+const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
     padding: theme.spacing(2),
     borderTop: '1px solid rgba(0, 0, 0, .125)',
-  }));
+}));
 
 export default function Inventory(props:any) {
-    const categories = [
-        {name: "Consumables", id: 2},
-        {name: "Weapons", id: 23},
-        {name: "Alterites", id: 21},
-        {name: "Astrals", id: 4},
-        {name: "Astral Shards", id: 5},
-        {name: "Ingots", id: 6},
-        {name: "Ingot Shard", id: 7},
-        {name: "Exchange Tickets", id: 12},
-        {name: "More Suptix", id: 13},
-        {name: "Encyclopedia Item", id: 18},
-        {name: "Miscellaneous", id: 19},
-        {name: "Training Items", id: 0},
-        {name: "Items used for armament augmentation", id: 1},
-        {name: "Event Items", id: 9},
-        {name: "Trading Items", id: 15},
-        {name: "Ticket", id: 8},
-        {name: "Ability Core", id: 11},
-        {name: "Wrightpiece", id: 16},
-        {name: "Star Speck", id: 20},
-    ];
-
+    
     const getCategories = () => {
         const result: any[] = [];
         for (const key in items) {
             const item = items[key];
             if (!result.includes(item[5])) {
-                //push {name: item[4], id: item[5]}
                 result.push({name: item[4], id: item[5]});
             }
         }
@@ -92,11 +70,9 @@ export default function Inventory(props:any) {
       setExpanded(newExpanded ? panel : false);
     };
 
-
     const makeListOfAllItems = () => {
         const result = [];
         for (const key in items) {
-            // console.log((items[key][0]));
             result.push(items[key]);
         }
         return result;
@@ -105,16 +81,10 @@ export default function Inventory(props:any) {
     const GetIDFromName = (name:string) => {
         for (const key in items) {
             if (items[key][0] === name) {
-                //log name:id
                 console.log(name + ":" + key);
                 return key;
             }
         }
-    }
-
-    //print the list of categories
-    for (const category of getCategories()) {
-        // console.log(category);
     }
 
     const [result, setResult] = React.useState<any[]>(makeListOfAllItems());
@@ -148,29 +118,24 @@ export default function Inventory(props:any) {
                     alignItems: 'center',
                     justifyContent: 'center',
                     width: '100%',
-                    // minHeight: '100vh',
-                    padding: '10px 0',
-                    
+                    padding: '60px 0',
                 }}
             >
-            <div
-                style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(15, 1fr)',
-                    boxSizing: 'border-box',
-                    justifyContent: 'center',
-                }}
+                <div
+                    style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(15, 1fr)',
+                        boxSizing: 'border-box',
+                        justifyContent: 'center',
+                    }}
                 >
-                {result.map((item) => (
-                    <div>
-                        <ItemDialog id={GetIDFromName(item[0])} name={item[1]} fileContent={props.fileContent} setFileContent={props.setFileContent} devnickname={item[0] } src={"https://wfjukebox.b-cdn.net/big"+item[2]+".png"} />
-                    </div>
-                ))}
+                    {result.map((item) => (
+                        <div key={GetIDFromName(item[0])}>
+                            <ItemDialog id={GetIDFromName(item[0])} name={item[1]} fileContent={props.fileContent} setFileContent={props.setFileContent} devnickname={item[0]} src={"https://wfjukebox.b-cdn.net/big"+item[2]+".png"} />
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
-
-            
-        </div>
     );
-
 }
