@@ -88,6 +88,11 @@ export default function ItemDialog(props: any) {
                     </InputAdornment>
                 }
                 inputRef={itemRef}
+                //max
+                inputProps={{
+                    min:0,
+                    max:props.cap
+                }}
 
 
                 />

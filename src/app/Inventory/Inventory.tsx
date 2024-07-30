@@ -131,7 +131,7 @@ export default function Inventory(props:any) {
                 >
                     {result.map((item) => (
                         <div key={GetIDFromName(item[0])}>
-                            <ItemDialog id={GetIDFromName(item[0])} name={item[1]} fileContent={props.fileContent} setFileContent={props.setFileContent} devnickname={item[0]} src={"https://wfjukebox.b-cdn.net/big"+item[2]+".png"} />
+                            <ItemDialog cap={item[17]} id={GetIDFromName(item[0])} name={item[1]} fileContent={props.fileContent} setFileContent={props.setFileContent} devnickname={item[0]} src={"https://wfjukebox.b-cdn.net/big"+item[2]+".png"} />
                         </div>
                     ))}
                 </div>
