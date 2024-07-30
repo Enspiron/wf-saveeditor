@@ -13,42 +13,10 @@ import Typography from '@mui/material/Typography';
 import ItemDialog from "./ItemDialog";
 import { get } from "http";
 import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+// import { Save } from "@mui/icons-material";
 
-const Accordion = styled((props: AccordionProps) => (
-    <MuiAccordion disableGutters elevation={0} square {...props} />
-  ))(({ theme }) => ({
-    border: `1px solid ${theme.palette.divider}`,
-    '&:not(:last-child)': {
-      borderBottom: 0,
-    },
-    '&::before': {
-      display: 'none',
-    },
-  }));
-
-const AccordionSummary = styled((props: AccordionSummaryProps) => (
-    <MuiAccordionSummary
-      expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />}
-      {...props}
-    />
-  ))(({ theme }) => ({
-    backgroundColor:
-      theme.palette.mode === 'dark'
-        ? 'rgba(255, 255, 255, .05)'
-        : 'rgba(0, 0, 0, .03)',
-    flexDirection: 'row-reverse',
-    '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
-      transform: 'rotate(90deg)',
-    },
-    '& .MuiAccordionSummary-content': {
-      marginLeft: theme.spacing(1),
-    },
-  }));
-
-const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
-    padding: theme.spacing(2),
-    borderTop: '1px solid rgba(0, 0, 0, .125)',
-}));
+const Save = require('../save');
 
 export default function Inventory(props:any) {
     
@@ -101,6 +69,15 @@ export default function Inventory(props:any) {
         setResult(newResult);
     }
 
+    const handleMaxAllItems = () => {
+        const allItems = makeListOfAllItems();
+        for (const item of allItems) {
+            const id = GetIDFromName(item[0]);
+            Save.setItemQuantity(id, item[17], props.fileContent);
+        }
+        setResult(makeListOfAllItems()); // Refresh the result list
+    };
+
     return (
         <div>
             <TextField
@@ -112,6 +89,11 @@ export default function Inventory(props:any) {
                     margin: '10px 0',
                 }}
             ></TextField>
+            <Button variant="contained"
+            onClick={handleMaxAllItems}
+            >
+                Max all items
+            </Button>
             <div
                 style={{
                     display: 'flex',
