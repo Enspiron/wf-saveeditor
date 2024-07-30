@@ -349,8 +349,8 @@ export default async function Home() {
     name: string;
   }
 
-  const saves = await GetSavesFromAPI();
-  const users = saves?.map((save:any, index:any) => {return {id: save.id, name: save.name}});
+  // const saves = await GetSavesFromAPI();
+  // const users = saves?.map((save:any, index:any) => {return {id: save.id, name: save.name}});
   // console.log(users);
  
   
@@ -393,7 +393,7 @@ export default async function Home() {
         >
           Clean Save Import
         </Button>
-        {await CheckCores() ? <div><SaveMenu saves={users || []} setFileContent={setFileContent} fileContent={fileContent} /><pre>This part is in beta!</pre></div> : null}
+        {/* {await CheckCores() ? <div><SaveMenu saves={users || []} setFileContent={setFileContent} fileContent={fileContent} /><pre>This part is in beta!</pre></div> : null} */}
         
       </Box>
       {/* {fileContent && Save.getUsername(fileContent)} */}
