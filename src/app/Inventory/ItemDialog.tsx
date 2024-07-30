@@ -78,7 +78,9 @@ export default function ItemDialog(props: any) {
                     width: '56px'
                 }} />
             </Grid>
-            <Grid item>
+            <Grid item
+            direction="row"
+            >
                 <Input
                 defaultValue={itemAmount}
                 type="number"
@@ -94,13 +96,21 @@ export default function ItemDialog(props: any) {
                     max:props.cap
                 }}
                 style={{
-                    width: '100%',
-                    margin: '10px 0',
+                    // width: '100%',
+                    margin: '10px',
                     textAlign: 'center',
                 }}
-
-
                 />
+                <Button
+                variant="contained"
+                onClick={()=>{
+                    setAmount(props.cap);
+                    //set the input value to the cap as well
+                    itemRef.current!.value = props.cap.toString();
+                }}
+                >
+                    Max
+                </Button>
             </Grid>
 
             <Button
