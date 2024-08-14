@@ -17,6 +17,8 @@ import Popper from '@mui/material/Popper';
 import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
 import { send } from "process";
+import TeamSetting from "./TeamSetting/TeamSetting";
+
 // 
 const axios = require('axios');
 
@@ -417,6 +419,7 @@ export default async function Home() {
           </AppBar>
           <TabPanel value={value} index={0} dir={theme.direction}>
             <General fileContent={fileContent} setFileContent={setFileContent} />
+            <TeamSetting fileContent={fileContent} setFileContent={setFileContent} />
           </TabPanel>
           <TabPanel value={value} index={1} dir={theme.direction}>
             <Characters userlist={fileContent} />
