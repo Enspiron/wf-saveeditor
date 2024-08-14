@@ -1,4 +1,8 @@
+import { Save } from "@mui/icons-material";
+
 const mana_node = require('./mana_node.json');
+const character_id = require('./character.json');
+const equipment_id = require('./equipment.json');
 
 export interface Save {
     data_headers: DataHeaders;
@@ -264,8 +268,10 @@ export function setEquipEnhanceLevel(equipmentID: number, level: number, save: S
 }
 
 //set equip level
-export function setEquipLevel(equipmentID: number, level: number, save: Save): void {
-    save.data.user_equipment_list[equipmentID].level = level;
+export function setEquipLevel(equipmentID: string, level: number, save: Save): void {
+    console.log("setting equip level to ", level);
+    console.log(save.data.user_equipment_list[equipmentID]);
+    save.data.user_equipment_list[equipmentID.toString()].level = level;
 }
 
 
@@ -412,6 +418,51 @@ export function editManaboard(characterID: number, ability: Ability, save: Save)
     // save.mana_node["user_character_mana_node_list"][characterID.toString()] = characterNodes;
 }
 
+//get ability level
+const indexMapping = {
+    abi1: { main: 0, levels: [1, 2, 3, 4, 5] },
+    abi2: { main: 6, levels: [7, 8, 9, 10, 11] },
+    abi3: { main: 12, levels: [13, 14, 15, 16, 17] },
+    ActionSkillEvolution: { main: 18 },
+    ActionSkillLevel: { levels: [19, 20, 21, 22] },
+    ab4: { main: 23, levels: [24, 25, 26, 27, 28] },
+    ab5: { main: 29, levels: [30, 31, 32, 33, 34] },
+    ab6: { main: 35, levels: [36, 37, 38, 39, 40] },
+  };
+  
+
+export function getAbilityLevel(characterID: number, abilityID: number, save: Save): any | void {
+    const characterNodes = mana_node["user_character_mana_node_list"][characterID.toString()];
+
+    const index = characterNodes.indexOf(abilityID);
+
+    if (index === -1) {
+        console.error(`Ability ID ${abilityID} not found for character ID ${characterID}`);
+        return;
+    }
+
+    for(const category in indexMapping) {
+        const categoryMapping = indexMapping[category as keyof typeof indexMapping];
+        
+        if('main' in categoryMapping && categoryMapping.main === index) {
+            return {category, level: 0};
+        }
+
+        if('levels' in categoryMapping) {
+            const levelIndex = categoryMapping.levels.indexOf(index);
+            if(levelIndex !== -1) {
+                return {category, level: levelIndex + 1};
+            }
+        }
+    }
+
+
+
+
+    return 0;
+
+}
+
 
 //get item
 
@@ -519,3 +570,84 @@ export function getComment(save: Save): string {
 export function setComment(comment: string, save: Save): void {
     save.data.user_info.comment = comment;
 }
+
+
+//get character exboost
+export function getCharacterExBoost(characterID: number, save: Save): ExBoost | undefined {
+    return save.data.user_character_list[characterID.toString()]?.ex_boost ? save.data.user_character_list[characterID.toString()].ex_boost : undefined;
+}
+
+
+//set character exboost
+export function setCharacterExBoost(characterID: number, exBoost: ExBoost, save: Save): void {
+    save.data.user_character_list[characterID.toString()].ex_boost = exBoost;
+}
+
+//set mananode
+export function setManaNode(nodeList: string[], characterID:number, save: Save): void {
+    //convert nodelist to array of numbers then set it to the save
+    const nodeArray = nodeList.map(node => parseInt(node, 10));
+    save.data.user_character_mana_node_list[characterID.toString()] = nodeArray;
+
+
+}
+
+//parse mananode to array of 6 or 3 depending if with mb2 or not
+export function getManaNodes(characterID:number, save: Save): any {
+    //parse the mananode to an array of strings
+
+
+    const nodeArray = save.data.user_character_mana_node_list[characterID.toString()];
+    if (!nodeArray) {
+        console.error(`No nodes found for character ID: ${characterID}`);
+        return -1;
+    }
+    return nodeArray;
+}
+
+//get user_party_group_list
+
+export function getParties(save: Save) {
+    return save.data.user_party_group_list;
+}
+
+// characterId to devName
+export function characterIdToDevName(characterID: number): string {
+    // Convert ID to string and check if it exists in the character_id object
+    const idStr = characterID.toString();
+    if (character_id.hasOwnProperty(idStr)) {
+        return character_id[idStr][0] || 'Unknown Character';
+    }
+    return 'Unknown Character';
+}
+
+// devName to characterId
+export function devNameToCharacterId(devName: string): number | null {
+    for (const key in character_id) {
+        if (character_id[key][0] === devName) {
+            return parseInt(key, 10);
+        }
+    }
+    return null;
+}
+
+// equipmentId to devName
+export function equipmentIdToDevName(equipmentID: number): string {
+    // Convert ID to string and check if it exists in the equipment_id object
+    const idStr = equipmentID.toString();
+    if (equipment_id.hasOwnProperty(idStr)) {
+        return equipment_id[idStr][0] || 'Unknown Equipment';
+    }
+    return 'Unknown Equipment';
+}
+
+// devName to equipmentId
+export function devNameToEquipmentId(devName: string): number | null {
+    for (const key in equipment_id) {
+        if (equipment_id[key][0] === devName) {
+            return parseInt(key, 10);
+        }
+    }
+    return null;
+}
+
